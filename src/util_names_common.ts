@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 /*global CSL: true */
 
 CSL.NameOutput.prototype.checkCommonAuthor = function (this: any, requireMatch: any): boolean {

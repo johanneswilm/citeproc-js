@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 /*global CSL: true */
 
 CSL.ambigConfigDiff = function (a: any, b: any): number {

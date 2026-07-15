@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 /*global CSL: true */
 
 CSL.evaluateLabel = function (node: CslNode, state: CslState, Item: CslItem, item: any): string {

@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 /*global CSL: true */
 
 CSL.Util.fixDateNode = function (this: any, parent: any, pos: any, node: any): any {

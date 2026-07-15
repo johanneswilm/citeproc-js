@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 CSL.Engine.prototype.getJurisdictionList = function (this: any, jurisdiction: any): any[] {
     var jurisdictionList: any[] = [];
     var jurisdictionElems = jurisdiction.split(":");

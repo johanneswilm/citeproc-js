@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 CSL.Engine.prototype.remapSectionVariable = function (this: any, inputList: any): void {
     for (let i = 0, ilen = inputList.length; i < ilen; i += 1) {
         var Item = inputList[i][0];

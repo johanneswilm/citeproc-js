@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 var StdRhinoTest = function(myname,engineNickname){
     this.myname = myname;
     this.engineNickname = engineNickname;

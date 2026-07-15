@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 /*global CSL: true */
 
 CSL.NameOutput.prototype._purgeEmptyBlobs = function (this: any, blobs: any): any {

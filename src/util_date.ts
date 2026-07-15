@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 /*global CSL: true */
 
 CSL.dateMacroAsSortKey = function (this: any, state: CslState, Item: CslItem): void {

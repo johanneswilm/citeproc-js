@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 /*global CSL: true */
 
 CSL.Engine.prototype.setOutputFormat = function (mode) {

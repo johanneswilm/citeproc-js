@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 CSL.getLocaleNames = function (myxml: any, preferredLocale?: string): string[] {
     var stylexml = CSL.setupXml(myxml);
 

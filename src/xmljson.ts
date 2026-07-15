@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 /**
  * Functions for parsing an XML object converted to JSON.
  */

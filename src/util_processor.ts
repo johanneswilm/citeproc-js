@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 /*global CSL: true */
 
 CSL.substituteOne = function (template: string): (state: CslState, list: any) => string {

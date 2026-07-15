@@ -98,11 +98,11 @@ interface CSLNamespace {
     // --- migrated modules (typed) ---
     // These are optional because ``load.ts`` opens the ``CSL`` object before
     // the modules that populate these members have run.
-    Stack?: typeof Stack;
-    Token?: typeof Token;
-    Blob?: typeof Blob;
-    NumericBlob?: typeof NumericBlob;
-    AmbigConfig?: typeof AmbigConfig;
+    Stack?: any;
+    Token?: any;
+    Blob?: any;
+    NumericBlob?: any;
+    AmbigConfig?: any;
     getSortCompare?: (default_locale?: string) => (a: string, b: string) => number;
     Util?: {
         cloneToken?(token: any): any;
@@ -143,11 +143,3 @@ declare function snarf(...args: any[]): any;
 declare function read(...args: any[]): any;
 declare var load: any;
 declare function print(...args: any[]): void;
-
-/**
- * The single global ``CSL`` namespace.  It is opened (as a ``var``) by
- * ``load.ts`` and extended by every other module; the index-signature escape
- * hatch keeps not-yet-migrated code compiling (those references resolve to
- * ``any``).
- */
-declare var CSL: CSLNamespace;

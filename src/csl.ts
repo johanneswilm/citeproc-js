@@ -33,7 +33,7 @@
 'use strict';
 
 
-var CSL: CSLNamespace = {
+export const CSL: CSLNamespace = {
 
     PROCESSOR_VERSION: "1.4.61",
 

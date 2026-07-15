@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 CSL.Node["conditions"] = {
     build: function (this: CslNode, state: CslState): void {
         if (this.tokentype === CSL.START) {

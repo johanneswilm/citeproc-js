@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 // Disambiguate names (the number of names is controlled externally, by successive
 // runs of the processor).
 

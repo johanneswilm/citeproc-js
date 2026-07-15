@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 /*global CSL: true */
 
 if ("undefined" === typeof console) {

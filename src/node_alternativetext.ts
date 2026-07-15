@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 CSL.Node["alternative-text"] = {
     build: function (this: CslNode, state: CslState, target: any[]): void {
         if (this.tokentype === CSL.SINGLETON) {

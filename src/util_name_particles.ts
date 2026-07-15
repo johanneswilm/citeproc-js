@@ -1,3 +1,4 @@
+import { CSL } from './csl';
 CSL.ParticleList = (function () {
     var always_dropping_1 = [[[0, 1], null]];
     var always_dropping_3 = [[[0, 3], null]];
