@@ -1,0 +1,36 @@
+<p><a href="https://www.npmjs.com/package/citeproc-test-runner">Citeproc Test Runner</a> (CTR for short) is a productivity tool for maintaining citation styles in the popular <a href="https://citationstyles.org/">Citation Style Language</a> (CSL) used by <a href="https://www.zotero.org/">Zotero</a>, <a href="https://www.mendeley.com/">Mendeley</a>, <a href="https://juris-m.github.io/">Jurism</a> and other projects. The script assumes that <a href="https://nodejs.org/">node</a>, <a href="https://www.java.com/en/download/">java</a> and <a href="https://mochajs.org/">mocha</a> are installed (the last globally with <code>npm i -g mocha</code>). With those in place, installation is a one-liner:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    <span class="kw">npm</span> install -g citeproc-test-runner</code></pre></div>
+<p>After installation, starting the program with <code>cslrun</code> will spit out instructions pointing back to this document. The remaining steps for setup are explained below. The instructions assume that you have a GitHub account (if you don't yet have an account, you should <a href="https://github.com">create a free account now</a>).</p>
+<h2 id="setting-up">Setting up</h2>
+<p>CTR can build tests for individual styles, using items from a shared public library. This allows style maintainers to quickly confirm that changes subsequently made to the style do not have unwanted side effects.</p>
+<p>Tests are identified to a style using its <em>slug name</em>, which is the last portion of the style's CSL <code>id</code> string. For example, the slug name of the style <code>http://www.zotero.org/styles/cell</code> is <code>cell</code>.</p>
+<p>Tests are written into and run from a local <em>style tests directory</em>. To facilitate the sharing of tests among maintainers, this directory should be a clone of <em>your personal fork</em> of the <a href="https://github.com/Juris-M/jm-style-tests">jm-style-tests</a> repository on GitHub:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    <span class="kw">&lt;visit</span> https://github.com/Juris-M/jm-style-tests and fork the repository<span class="kw">&gt;</span>
+    <span class="kw">git</span> clone https://github.com/my-github-name/jm-style-tests.git</code></pre></div>
+<p>After cloning your fork of the tests repository, set the path to it in the CTR configuration file, located in the user home directory <code>~/.cslrun.yaml</code>:</p>
+<div class="sourceCode"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="fu">groupID:</span> 2319948
+<span class="fu">path:</span>
+  <span class="fu">styletests:</span> /path/to/jm-style-tests
+  <span class="fu">local:</span> false
+  <span class="fu">std:</span> false
+  <span class="fu">src:</span> false
+  <span class="fu">locale:</span> false
+  <span class="fu">modules:</span> false
+  <span class="fu">cslschema:</span> false
+  <span class="fu">cslmschema:</span> false</code></pre></div>
+<p>By default, CTR builds tests from <a href="https://www.zotero.org/groups/2319948/jurism_style_test_items?">Jurism Style Test Items</a>, a public group library (to use a different source library, set its <code>id</code> as the <code>groupID</code> value in <code>~/.cslrun.yaml</code>). To make items available for a given style, join the group and create a top-level collection with its slug name, and add some items to the collection. It is helpful to write a short description of the item to be tests (i.e. within 30 characters or so) into the Abstract field.</p>
+<p>To build tests, use <code>cslrun</code> with the <code>-w</code> option to set the style to be tested, and the <code>-U</code> option to update test fixtures from the group library:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    <span class="kw">cslrun</span> -w /path/to/cell.csl -U</code></pre></div>
+<p>This will write test fixtures to a subdirectory of the style tests directory, named for the slug name of the style (if the subdirectory does not exist, it will be created). Finish the tests by using <code>cslrun</code> with the <code>a</code> option to run all tests, and the <code>-k</code> option to confirm output:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    <span class="kw">cslrun</span> -w /path/to/cell.csl -a -k</code></pre></div>
+<p>With the <code>-k</code> option, <code>cslrun</code> will show the style output as a failed test, prompting for confirmation that the output is correct. If <code>Y</code> is selected for each failing fixture, all tests will pass. Use <code>ctrl-c</code> to exit <code>cslrun</code> and return to the command line.</p>
+<p>To share the tests. check them in and push them to your <code>jm-style-tests</code> repository on GitHub:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    <span class="kw">cd</span> /path/to/jm-style-tests
+    <span class="kw">git</span> commit -m <span class="st">&quot;Add tests for cell&quot;</span> -a
+    <span class="kw">git</span> push</code></pre></div>
+<p>Then jump to GitHub and file a pull request to the main <code>jm-style-tests</code> project to have your tests added to the suite.</p>
+<p>That's pretty much it. You can rerun the tests against the style anytime. If the <code>-k</code> option is omitted, <code>cslrun</code> will simply watch the CSL file, revalidating it and rerunning all tests whenever it is saved, to convert any plain text editor into a poorman's CSL IDE:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    <span class="kw">cslrun</span> -w /path/to/cell.csl -a</code></pre></div>
+<p>A few other options are available on CTR. See <code>cslrun -h</code> for further details.</p>
+<p>Enjoy!</p>
+<p>FB</p>

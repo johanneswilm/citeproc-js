@@ -1,0 +1,19 @@
+>>===== MODE =====>>
+%%MODE%%
+<<===== MODE =====<<
+
+>>===== KEYS =====>>
+%%KEYS%%
+<<===== KEYS =====<<
+
+>>===== DESCRIPTION =====>>
+%%DESCRIPTION%%
+<<===== DESCRIPTION =====<<
+
+>>===== RESULT =====>>
+%%RESULT%%
+<<===== RESULT =====<<
+
+>>===== INPUT =====>>
+%%INPUT%%
+<<===== INPUT =====<<
