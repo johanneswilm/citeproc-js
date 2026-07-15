@@ -59,7 +59,7 @@ CSL.dateAsSortKey = function (this: any, state: CslState, Item: CslItem, isMacro
     }
 };
 
-CSL.Engine.prototype.dateParseArray = function (this: any, date_obj: any): any {
+export function dateParseArray(this: any, date_obj: any): any {
     let ret: any, field: any, dp: any, exts: any;
     ret = {};
     for (let field in date_obj) {

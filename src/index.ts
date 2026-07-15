@@ -11,19 +11,35 @@ import './sort';
 import './util/disambig';
 import './util/nodes';
 import './util/dateparser';
-import './engine/build';
+import { Engine } from './engine/build';
+CSL.Engine = Engine;
+import { remapSectionVariable, setNumberLabels } from './util/static_locator';
 import './util/static_locator';
+import { normalDecorIsOrphan } from './util/processor';
 import './util/processor';
+import { getCitationLabel, getTrigraphParams } from './util/citationlabel';
 import './util/citationlabel';
-import './engine/control';
+import { setOutputFormat, getSortFunc, setLangTagsForCslSort, setLangTagsForCslTransliteration, setLangTagsForCslTranslation, setLangPrefsForCites, setLangPrefsForCiteAffixes, setAutoVietnameseNamesOption, setAbbreviations, setSuppressTrailingPunctuation } from './engine/control';
 import { Queue } from './output/queue';
 CSL.Output = CSL.Output || {};
 CSL.Output.Queue = Queue;
-import './engine/state';
-import './engine/cite';
-import './engine/bibliography';
+import { Opt, Tmp, Fun, Build, Configure, Citation, Bibliography, BibliographySort, CitationSort, InText } from './engine/state';
+CSL.Engine.Opt = Opt;
+CSL.Engine.Tmp = Tmp;
+CSL.Engine.Fun = Fun;
+CSL.Engine.Build = Build;
+CSL.Engine.Configure = Configure;
+CSL.Engine.Citation = Citation;
+CSL.Engine.Bibliography = Bibliography;
+CSL.Engine.BibliographySort = BibliographySort;
+CSL.Engine.CitationSort = CitationSort;
+CSL.Engine.InText = InText;
+import { previewCitationCluster, appendCitationCluster, processCitationCluster, process_CitationCluster, makeCitationCluster } from './engine/cite';
+import { makeBibliography } from './engine/bibliography';
+import { setCitationId } from './util/integration';
 import './util/integration';
-import './engine/update';
+import { rebuildProcessorState, restoreProcessorState, updateItems, updateUncitedItems } from './engine/update';
+import { localeConfigure, localeSet } from './util/locale';
 import './util/locale';
 import './util/locale_sniff';
 import './node/bibliography';
@@ -82,11 +98,13 @@ import './obj/ambigconfig';
 import './obj/blob';
 import './obj/number';
 import './util/datenode';
+import { dateParseArray } from './util/date';
 import './util/date';
 import './util/names/index';
 import './util/dates';
 import './util/sort';
 import './util/substitute';
+import { processNumber } from './util/number';
 import './util/number';
 import './util/page';
 import './util/flipflop';
@@ -99,7 +117,44 @@ import { Disambiguation } from './disambig/cites';
 CSL.Disambiguation = Disambiguation;
 import './disambig/names';
 import './disambig/citations';
+import { getJurisdictionList, loadStyleModule, retrieveAllStyleModules } from './util/modules';
 import './util/modules';
 import './util/name_particles';
+
+Object.assign(CSL.Engine.prototype, {
+  processNumber,
+  dateParseArray,
+  remapSectionVariable,
+  setNumberLabels,
+  normalDecorIsOrphan,
+  getJurisdictionList,
+  loadStyleModule,
+  retrieveAllStyleModules,
+  getCitationLabel,
+  getTrigraphParams,
+  localeConfigure,
+  localeSet,
+  setCitationId,
+  setOutputFormat,
+  getSortFunc,
+  setLangTagsForCslSort,
+  setLangTagsForCslTransliteration,
+  setLangTagsForCslTranslation,
+  setLangPrefsForCites,
+  setLangPrefsForCiteAffixes,
+  setAutoVietnameseNamesOption,
+  setAbbreviations,
+  setSuppressTrailingPunctuation,
+  previewCitationCluster,
+  appendCitationCluster,
+  processCitationCluster,
+  process_CitationCluster,
+  makeCitationCluster,
+  rebuildProcessorState,
+  restoreProcessorState,
+  updateItems,
+  updateUncitedItems,
+  makeBibliography,
+});
 
 export = CSL;

@@ -33,7 +33,7 @@ CSL.localeResolve = function (langstr, defaultLocale) {
 };
 
 // Use call to invoke this.
-CSL.Engine.prototype.localeConfigure = function (langspec, beShy) {
+export function localeConfigure(langspec, beShy) {
     let localexml;
     if (beShy && this.locale[langspec.best]) {
         return;
@@ -84,7 +84,7 @@ CSL.Engine.prototype.localeConfigure = function (langspec, beShy) {
 // with a top-level local specifier, and terms, opts, dates
 // below.
 //
-CSL.Engine.prototype.localeSet = function (myxml, lang_in, lang_out) {
+export function localeSet(myxml, lang_in, lang_out) {
     let blob, locale, nodes, attributes, pos, term, form, termname, styleopts, date, attrname, len, genderform, target, i, ilen;
     lang_in = lang_in.replace("_", "-");
     lang_out = lang_out.replace("_", "-");

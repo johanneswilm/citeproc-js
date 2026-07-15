@@ -170,7 +170,7 @@ CSL.Util.Suffixator.prototype.format = function (N) {
 };
 
 
-CSL.Engine.prototype.processNumber = function (node, ItemObject, variable) {
+export function processNumber(node, ItemObject, variable) {
     //print("** processNumber() ItemObject[variable]="+ItemObject[variable]);
     let val;
 

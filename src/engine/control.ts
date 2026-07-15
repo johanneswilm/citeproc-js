@@ -1,16 +1,16 @@
 import { CSL } from '../csl';
 /*global CSL: true */
 
-CSL.Engine.prototype.setOutputFormat = function (mode) {
+export function setOutputFormat(this: any, mode: any): void {
     this.opt.mode = mode;
     this.fun.decorate = CSL.Mode(mode);
     if (!this.output[mode]) {
         this.output[mode] = {};
         this.output[mode].tmp = {};
     }
-};
+}
 
-CSL.Engine.prototype.getSortFunc = function () {
+export function getSortFunc(this: any): any {
     return function (a,b) {
         a = a.split("-");
         b = b.split("-");
@@ -30,9 +30,9 @@ CSL.Engine.prototype.getSortFunc = function () {
             }
         }
     };
-};
+}
 
-CSL.Engine.prototype.setLangTagsForCslSort = function (tags) {
+export function setLangTagsForCslSort(this: any, tags: any): void {
     let i, ilen;
     if (tags) {
         this.opt['locale-sort'] = [];
@@ -41,9 +41,9 @@ CSL.Engine.prototype.setLangTagsForCslSort = function (tags) {
         }
     }
     this.opt['locale-sort'].sort(this.getSortFunc());
-};
+}
     
-CSL.Engine.prototype.setLangTagsForCslTransliteration = function (tags) {
+export function setLangTagsForCslTransliteration(this: any, tags: any): void {
     let i, ilen;
     this.opt['locale-translit'] = [];
     if (tags) {
@@ -52,9 +52,9 @@ CSL.Engine.prototype.setLangTagsForCslTransliteration = function (tags) {
         }
     }
     this.opt['locale-translit'].sort(this.getSortFunc());
-};
+}
     
-CSL.Engine.prototype.setLangTagsForCslTranslation = function (tags) {
+export function setLangTagsForCslTranslation(this: any, tags: any): void {
     let i, ilen;
     this.opt['locale-translat'] = [];
     if (tags) {
@@ -63,9 +63,9 @@ CSL.Engine.prototype.setLangTagsForCslTranslation = function (tags) {
         }
     }
     this.opt['locale-translat'].sort(this.getSortFunc());
-};
+}
 
-CSL.Engine.prototype.setLangPrefsForCites = function (obj, conv) {
+export function setLangPrefsForCites(this: any, obj: any, conv: any): void {
     const opt = this.opt['cite-lang-prefs'];
     if (!conv) {
         conv = function (key) {
@@ -73,17 +73,12 @@ CSL.Engine.prototype.setLangPrefsForCites = function (obj, conv) {
         };
     }
     const segments = ['Persons', 'Institutions', 'Titles', 'Journals', 'Publishers', 'Places'];
-    // Set values in place
     for (let i = 0, ilen = segments.length; i < ilen; i += 1) {
         const clientSegment = conv(segments[i]);
         const citeprocSegment = segments[i].toLowerCase();
         if (!obj[clientSegment]) {
             continue;
         }
-        //
-        // Normalize the sequence of secondary and tertiary
-        // in the provided obj segment list.
-        //
         const supplements = [];
         while (obj[clientSegment].length > 1) {
             supplements.push(obj[clientSegment].pop());
@@ -95,9 +90,6 @@ CSL.Engine.prototype.setLangPrefsForCites = function (obj, conv) {
         while (supplements.length) {
             obj[clientSegment].push(supplements.pop());
         }
-        //
-        // normalization done.
-        //
         const lst = opt[citeprocSegment];
         while (lst.length) {
             lst.pop();
@@ -106,9 +98,9 @@ CSL.Engine.prototype.setLangPrefsForCites = function (obj, conv) {
             lst.push(obj[clientSegment][j]);
         }
     }
-};
+}
 
-CSL.Engine.prototype.setLangPrefsForCiteAffixes = function (affixList) {
+export function setLangPrefsForCiteAffixes(this: any, affixList: any): void {
     if (affixList && affixList.length === 48) {
         const affixes = this.opt.citeAffixes;
         let count = 0;
@@ -138,22 +130,22 @@ CSL.Engine.prototype.setLangPrefsForCiteAffixes = function (affixList) {
         }
         this.opt.citeAffixes = affixes;
     }
-};
+}
 
-CSL.Engine.prototype.setAutoVietnameseNamesOption = function (arg) {
+export function setAutoVietnameseNamesOption(this: any, arg: any): void {
     if (arg) {
         this.opt["auto-vietnamese-names"] = true;
     } else {
         this.opt["auto-vietnamese-names"] = false;
     }
-};
+}
 
-CSL.Engine.prototype.setAbbreviations = function (arg) {
+export function setAbbreviations(this: any, arg: any): void {
     if (this.sys.setAbbreviations) {
         this.sys.setAbbreviations(arg);
     }
-};
+}
 
-CSL.Engine.prototype.setSuppressTrailingPunctuation = function (arg) {
+export function setSuppressTrailingPunctuation(this: any, arg: any): void {
     this.citation.opt.suppressTrailingPunctuation = !!arg;
-};
+}

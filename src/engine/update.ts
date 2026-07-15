@@ -1,5 +1,5 @@
 import { CSL } from '../csl';
-CSL.Engine.prototype.rebuildProcessorState = function (citations, mode, uncitedItemIDs) {
+export function rebuildProcessorState(this: any, citations: any, mode: any, uncitedItemIDs: any): any {
     // Rebuilds the processor from scratch, based on a list of citation
     // objects. In a dynamic application, once the internal state of processor
     // is established, citations should edited with individual invocations
@@ -54,7 +54,7 @@ CSL.Engine.prototype.rebuildProcessorState = function (citations, mode, uncitedI
 };
 
 
-CSL.Engine.prototype.restoreProcessorState = function (citations) {
+export function restoreProcessorState(this: any, citations: any): any {
     let i, ilen, j, jlen, item, Item, newitem, citationList, itemList, sortedItems;
     
     // This function is deprecated.
@@ -144,7 +144,7 @@ CSL.Engine.prototype.restoreProcessorState = function (citations) {
 };
 
 
-CSL.Engine.prototype.updateItems = function (idList, nosort, rerun_ambigs, implicitUpdate) {
+export function updateItems(this: any, idList: any, nosort: any, rerun_ambigs: any, implicitUpdate: any): any {
     const debug = false;
     const oldArea = this.tmp.area;
     const oldRoot = this.tmp.root;
@@ -203,7 +203,7 @@ CSL.Engine.prototype.updateItems = function (idList, nosort, rerun_ambigs, impli
     return this.registry.getSortedIds();
 };
 
-CSL.Engine.prototype.updateUncitedItems = function (idList, nosort) {
+export function updateUncitedItems(this: any, idList: any, nosort: any): any {
     let idHash;
     const oldArea = this.tmp.area;
     const oldRoot = this.tmp.root;

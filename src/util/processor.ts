@@ -133,7 +133,7 @@ CSL.Doppeler = function (this: any, rexStr: string, stringMangler?: any): void {
     };
 };
 
-CSL.Engine.prototype.normalDecorIsOrphan = function (this: any, blob: any, params: any): boolean {
+export function normalDecorIsOrphan(this: any, blob: any, params: any): boolean {
     if (params[1] === "normal") {
         let use_param = false;
         let all_the_decor: any;

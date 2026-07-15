@@ -1,5 +1,5 @@
 import { CSL } from '../csl';
-CSL.Engine.prototype.remapSectionVariable = function (this: any, inputList: any): void {
+export function remapSectionVariable(this: any, inputList: any): void {
     for (let i = 0, ilen = inputList.length; i < ilen; i += 1) {
         const Item = inputList[i][0];
         const item = inputList[i][1];
@@ -53,7 +53,7 @@ CSL.Engine.prototype.remapSectionVariable = function (this: any, inputList: any)
 };
 
 
-CSL.Engine.prototype.setNumberLabels = function (this: any, Item: CslItem): void {
+export function setNumberLabels(this: any, Item: CslItem): void {
     if (Item.number
         && ["bill", "gazette", "legislation", "regulation", "treaty"].indexOf(Item.type) > -1
         && this.opt.development_extensions.consolidate_legal_items

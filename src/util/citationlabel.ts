@@ -2,7 +2,7 @@ import { CSL } from '../csl';
 /*global CSL: true */
 
 
-CSL.Engine.prototype.getCitationLabel = function (this: any, Item: CslItem): string {
+export function getCitationLabel(this: any, Item: CslItem): string {
     let label = "";
     const params = this.getTrigraphParams();
     let config = params[0];
@@ -84,7 +84,7 @@ CSL.Engine.prototype.getCitationLabel = function (this: any, Item: CslItem): str
     return label;
 };
 
-CSL.Engine.prototype.getTrigraphParams = function (this: any): any[] {
+export function getTrigraphParams(this: any): any[] {
     const params: any[] = [];
     const ilst = this.opt.trigraph.split(":");
     if (!this.opt.trigraph || this.opt.trigraph.slice(0, 1) !== "A") {

@@ -1,7 +1,7 @@
 import { CSL } from '../csl';
 /*global CSL: true */
 
-CSL.Engine.prototype.previewCitationCluster = function (citation, citationsPre, citationsPost, newMode) {
+export function previewCitationCluster(this: any, citation: any, citationsPre: any, citationsPost: any, newMode: any): any {
     // Generate output for a hypothetical citation at the current position,
     // Leave the registry in the same state in which it was found.
     //print("################### previewCitationCluster() #################");
@@ -21,7 +21,7 @@ CSL.Engine.prototype.previewCitationCluster = function (citation, citationsPre, 
     return ret[1];
 };
 
-CSL.Engine.prototype.appendCitationCluster = function (citation) {
+export function appendCitationCluster(this: any, citation: any): any {
     const citationsPre = [];
     let len = this.registry.citationreg.citationByIndex.length;
     for (let pos = 0; pos < len; pos += 1) {
@@ -33,7 +33,7 @@ CSL.Engine.prototype.appendCitationCluster = function (citation) {
 };
 
 
-CSL.Engine.prototype.processCitationCluster = function (citation, citationsPre, citationsPost, flag) {
+export function processCitationCluster(this: any, citation: any, citationsPre: any, citationsPost: any, flag: any): any {
     let c, preCitation, postCitation, i, ilen, j, jlen, k, klen, n, nlen, key, Item, item, noteCitations, textCitations, m, citationsInNote;
     this.debug = false;
     this.tmp.loadedItemIDs = {};
@@ -853,7 +853,7 @@ CSL.Engine.prototype.processCitationCluster = function (citation, citationsPre, 
     return [this.registry.return_data, ret];
 };
 
-CSL.Engine.prototype.process_CitationCluster = function (sortedItems, citation) {
+export function process_CitationCluster(this: any, sortedItems: any, citation: any): any {
     let str = "";
     if (citation && citation.properties && citation.properties.mode === "composite") {
         citation.properties.mode = "author-only";
@@ -883,7 +883,7 @@ CSL.Engine.prototype.process_CitationCluster = function (sortedItems, citation) 
     return str;
 };
 
-CSL.Engine.prototype.makeCitationCluster = function (rawList) {
+export function makeCitationCluster(this: any, rawList: any): any {
     let inputList, newitem, str, pos, len, item, Item;
     inputList = [];
     len = rawList.length;

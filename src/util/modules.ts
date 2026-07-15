@@ -1,5 +1,5 @@
 import { CSL } from '../csl';
-CSL.Engine.prototype.getJurisdictionList = function (this: any, jurisdiction: any): any[] {
+export function getJurisdictionList(this: any, jurisdiction: any): any[] {
     const jurisdictionList: any[] = [];
     const jurisdictionElems = jurisdiction.split(":");
     for (let j = jurisdictionElems.length; j > 0; j -= 1) {
@@ -16,7 +16,7 @@ CSL.Engine.prototype.getJurisdictionList = function (this: any, jurisdiction: an
     return jurisdictionList;
 };
 
-CSL.Engine.prototype.loadStyleModule = function (this: any, jurisdiction: any, xmlSource: any, skipFallback?: any): any {
+export function loadStyleModule(this: any, jurisdiction: any, xmlSource: any, skipFallback?: any): any {
     let myFallback = null;
     let macroCount = 0;
     this.juris[jurisdiction] = {};
@@ -65,7 +65,7 @@ CSL.Engine.prototype.loadStyleModule = function (this: any, jurisdiction: any, x
     return myFallback;
 };
 
-CSL.Engine.prototype.retrieveAllStyleModules = function (this: any, jurisdictionList: any): any {
+export function retrieveAllStyleModules(this: any, jurisdictionList: any): any {
     let ret: any = {};
     let preferences = this.locale[this.opt.lang].opts["jurisdiction-preference"];
     preferences = preferences ? preferences : [];

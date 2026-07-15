@@ -2,7 +2,7 @@ import { CSL } from '../csl';
 /*global CSL: true */
 
 
-CSL.Engine.prototype.setCitationId = function (this: any, citation: any, force?: boolean): string | boolean {
+export function setCitationId(this: any, citation: any, force?: boolean): string | boolean {
     let ret: string | boolean, id: number, direction: number;
     ret = false;
     if (!citation.citationID || force) {
