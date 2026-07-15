@@ -4,9 +4,9 @@ import { CSL } from '../../csl';
 CSL.NameOutput.prototype.constrainNames = function (this: any): void {
     // figure out how many names to include, in light of the disambig params
     this.names_count = 0;
-    var pos: any;
+    let pos: any;
     for (let i = 0, ilen = this.variables.length; i < ilen; i += 1) {
-        var v = this.variables[i];
+        const v = this.variables[i];
         pos = this.nameset_base + i;
         // Constrain independent authors here
         if (this.freeters[v].length) {
@@ -36,8 +36,8 @@ CSL.NameOutput.prototype.constrainNames = function (this: any): void {
 
 CSL.NameOutput.prototype._imposeNameConstraints = function (this: any, lst: any, count: any, key: any, pos: any): void {
     // display_names starts as the original length of this list of names.
-    var display_names = lst[key];
-    var discretionary_names_length = this.state.tmp["et-al-min"];
+    const display_names = lst[key];
+    let discretionary_names_length = this.state.tmp["et-al-min"];
 
     // Mappings, to allow existing disambiguation machinery to
     // remain untouched.
@@ -63,8 +63,8 @@ CSL.NameOutput.prototype._imposeNameConstraints = function (this: any, lst: any,
             discretionary_names_length = this.etal_min - 2;
         }
     }
-    var sane = this.etal_min >= this.etal_use_first;
-    var overlength = count[key] > discretionary_names_length;
+    const sane = this.etal_min >= this.etal_use_first;
+    const overlength = count[key] > discretionary_names_length;
     // This var is used to control contextual join, and
     // lies about the number of names when forceEtAl is true,
     // unless normalized.

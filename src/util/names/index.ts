@@ -9,7 +9,7 @@ CSL.Util.Names.compareNamesets = CSL.NameOutput.prototype._compareNamesets;
  * Un-initialize a name (quash caps after first character)
  */
 CSL.Util.Names.unInitialize = function (state, name) {
-    var i, ilen, namelist, punctlist, ret;
+    let i, ilen, namelist, punctlist, ret;
     if (!name) {
         return "";
     }
@@ -41,7 +41,7 @@ CSL.Util.Names.unInitialize = function (state, name) {
  * Initialize a name.
  */
 CSL.Util.Names.initializeWith = function (state, name, terminator, normalizeOnly) {
-    var i, ilen, mm, lst, ret;
+    let i, ilen, mm, lst, ret;
     if (!name) {
         return "";
     }
@@ -77,12 +77,12 @@ CSL.Util.Names.initializeWith = function (state, name, terminator, normalizeOnly
     }
 
     // (1) Split the string
-    var nameSplits = (CSL.Output.Formatters.nameDoppel as any).split(name);
-    var namelist = [];
+    const nameSplits = (CSL.Output.Formatters.nameDoppel as any).split(name);
+    let namelist = [];
     namelist = [nameSplits.strings[0]];
 
     if (nameSplits.tags.length === 0) {
-        var mmm = namelist[0].match(/[^\.]+$/);
+        const mmm = namelist[0].match(/[^\.]+$/);
         if (mmm && mmm[0].length === 1 && mmm[0] !== mmm[0].toLowerCase()) {
             namelist[0] += ".";
         }
@@ -134,11 +134,11 @@ CSL.Util.Names.tagonly = function(state, str) {
 };
 
 CSL.Util.Names.doNormalize = function (state, namelist, terminator) {
-    var i, ilen;
+    let i, ilen;
     // namelist is a flat list of given-name elements and space-like separators between them
     terminator = terminator ? terminator : "";
     // Flag elements that look like abbreviations
-    var isAbbrev = [];
+    const isAbbrev = [];
     for (let i = 0, ilen = namelist.length; i < ilen; i += 1) {
         if (this.notag(namelist[i]).length > 1 && this.notag(namelist[i]).slice(-1) === ".") {
             // namelist[i] = namelist[i].slice(0, -1);
@@ -182,7 +182,7 @@ CSL.Util.Names.doNormalize = function (state, namelist, terminator) {
 };
 
 CSL.Util.Names.doInitialize = function (state, namelist, terminator) {
-    var i, ilen, m, j, jlen, lst, n;
+    let i, ilen, m, j, jlen, lst, n;
     for (let i = 0, ilen = namelist.length; i < ilen; i += 2) {
         n = namelist[i];
         if (!n) {
@@ -197,12 +197,12 @@ CSL.Util.Names.doInitialize = function (state, namelist, terminator) {
             m[2] = "";
         }
         if (m && m[1].slice(0, 1) === m[1].slice(0, 1).toUpperCase()) {
-            var extra = "";
+            let extra = "";
             if (m[2]) {
-                var s = "";
+                let s = "";
                 lst = m[2].split("");
                 for (let j = 0, jlen = lst.length; j < jlen; j += 1) {
-                    var c = lst[j];
+                    const c = lst[j];
                     if (c === c.toUpperCase()) {
                         s += c;
                     } else {

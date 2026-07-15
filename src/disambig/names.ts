@@ -2,7 +2,7 @@ import { CSL } from '../csl';
 /*global CSL: true */
 
 CSL.Registry.NameReg = function (state) {
-    var pkey, ikey, skey, dagopt, gdropt, items, strip_periods, set_keys, evalname, delitems, addname, myitems;
+    let pkey, ikey, skey;
     this.state = state;
     this.namereg = {};
     this.nameind = {};
@@ -14,14 +14,14 @@ CSL.Registry.NameReg = function (state) {
     // keys registered, indexed by ID
     this.itemkeyreg = {};
 
-    strip_periods = function (str) {
+    const strip_periods = function (str) {
         if (!str) {
             str = "";
         }
         return str.replace(/\./g, " ").replace(/\s+/g, " ").replace(/\s+$/,"");
     };
 
-    set_keys = function (state, itemid, nameobj) {
+    const set_keys = function (state, itemid, nameobj) {
         pkey = strip_periods(nameobj.family);
 
         if (state.opt["demote-non-dropping-particle"] === "never" && nameobj["non-dropping-particle"] && nameobj["family"]) {
@@ -43,8 +43,8 @@ CSL.Registry.NameReg = function (state) {
         }
     };
 
-    evalname = function (item_id, nameobj, namenum, request_base, form, initials) {
-        var param;
+    const evalname = function (item_id, nameobj, namenum, request_base, form, initials) {
+        let param;
         // XXX THIS CAN NO LONGER HAPPEN
         if (state.tmp.area.slice(0, 12) === "bibliography" && !form) {
             if ("string" === typeof initials) {
@@ -53,7 +53,7 @@ CSL.Registry.NameReg = function (state) {
                 return 2;
             }
         }
-        var res = state.nameOutput.getName(nameobj, "locale-translit", true);
+        const res = state.nameOutput.getName(nameobj, "locale-translit", true);
         nameobj = res.name;
         set_keys(this.state, "" + item_id, nameobj);
         //
@@ -67,9 +67,9 @@ CSL.Registry.NameReg = function (state) {
         // <option disambiguate-add-givenname value="by-cite"/> (g)
         //
         param = 2;
-        dagopt = state.opt["disambiguate-add-givenname"];
-        gdropt = state.citation.opt["givenname-disambiguation-rule"];
-        var gdropt_orig = gdropt;
+        const dagopt = state.opt["disambiguate-add-givenname"];
+        let gdropt = state.citation.opt["givenname-disambiguation-rule"];
+        const gdropt_orig = gdropt;
         if (gdropt === "by-cite") {
             gdropt = "all-names";
         }
@@ -137,8 +137,8 @@ CSL.Registry.NameReg = function (state) {
     // standard test suite, but it has been hand-tested with
     // a print trace, and seems to work okay.
     //
-    delitems = function (ids) {
-        var pos, len, posB, id, fullkey;
+    const delitems = function (ids) {
+        let pos, len, posB, id, fullkey, items;
         if ("string" === typeof ids || "number" === typeof ids) {
             ids = ["" + ids];
         }
@@ -171,7 +171,7 @@ CSL.Registry.NameReg = function (state) {
                     // have absolutely nothing to do with whether there was ever
                     // a registration at each key level.
                     if (skey && this.namereg[pkey].ikey[ikey] && this.namereg[pkey].ikey[ikey].skey[skey]) {
-                        myitems = this.namereg[pkey].ikey[ikey].skey[skey].items;
+                        const myitems = this.namereg[pkey].ikey[ikey].skey[skey].items;
                         posB = myitems.indexOf("" + id);
                         if (posB > -1) {
                             this.namereg[pkey].ikey[ikey].skey[skey].items = myitems.slice(0, posB).concat(myitems.slice([(posB + 1)]));
@@ -229,9 +229,9 @@ CSL.Registry.NameReg = function (state) {
     // the state object in the execution wrappers that run the
     // style.
     //
-    addname = function (item_id, nameobj, pos) {
-        var i, ilen;
-        var res = state.nameOutput.getName(nameobj, "locale-translit", true);
+    const addname = function (item_id, nameobj, pos) {
+        let i, ilen;
+        const res = state.nameOutput.getName(nameobj, "locale-translit", true);
         nameobj = res.name;
 
         if (state.citation.opt["givenname-disambiguation-rule"]

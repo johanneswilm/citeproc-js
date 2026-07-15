@@ -2,15 +2,15 @@ import { CSL } from '../../csl';
 /*global CSL: true */
 
 CSL.NameOutput.prototype.divideAndTransliterateNames = function (this: any): void {
-    var i: number, ilen: number, j: number, jlen: number;
-    var Item = this.Item;
-    var variables = this.variables;
+    let i: number, ilen: number, j: number, jlen: number;
+    const Item = this.Item;
+    const variables = this.variables;
     this.varnames = variables.slice();
     this.freeters = {};
     this.persons = {};
     this.institutions = {};
     for (let i = 0, ilen = variables.length; i < ilen; i += 1) {
-        var v = variables[i];
+        const v = variables[i];
         this.variable_offset[v] = this.nameset_offset;
         let values = this._normalizeVariableValue(Item, v);
         if (this.name.strings["suppress-min"] && values.length >= this.name.strings["suppress-min"]) {
@@ -42,7 +42,7 @@ CSL.NameOutput.prototype.divideAndTransliterateNames = function (this: any): voi
 };
 
 CSL.NameOutput.prototype._normalizeVariableValue = function (this: any, Item: CslItem, variable: any): any {
-    var names: any;
+    let names: any;
     if ("string" === typeof Item[variable] || "number" === typeof Item[variable]) {
         CSL.debug("name variable \"" + variable + "\" is string or number, not array. Attempting to fix.");
         names = [{ literal: Item[variable] + "" }];
@@ -63,7 +63,7 @@ CSL.NameOutput.prototype._getFreeters = function (this: any, v: any, values: any
     if (this.state.opt.development_extensions.spoof_institutional_affiliations) {
         for (let i = values.length - 1; i > -1; i -= 1) {
             if (this.isPerson(values[i])) {
-                var value = this._checkNickname(values.pop());
+                const value = this._checkNickname(values.pop());
                 if (value) {
                     this.freeters[v].push(value);
                 }
@@ -73,7 +73,7 @@ CSL.NameOutput.prototype._getFreeters = function (this: any, v: any, values: any
         }
     } else {
         for (let i2 = values.length - 1; i2 > -1; i2 -= 1) {
-            var value2 = values.pop();
+            let value2 = values.pop();
             if (this.isPerson(value2)) {
                 value2 = this._checkNickname(value2);
             }
@@ -92,12 +92,12 @@ CSL.NameOutput.prototype._getPersonsAndInstitutions = function (this: any, v: an
     if (!this.state.opt.development_extensions.spoof_institutional_affiliations) {
         return;
     }
-    var persons = [];
-    var has_affiliates = false;
-    var first = true;
+    let persons = [];
+    let has_affiliates = false;
+    let first = true;
     for (let i = values.length - 1; i > -1; i -= 1) {
         if (this.isPerson(values[i])) {
-            var value = this._checkNickname(values[i]);
+            const value = this._checkNickname(values[i]);
             if (value) {
                 persons.push(value);
             }
@@ -128,15 +128,15 @@ CSL.NameOutput.prototype._clearValues = function (this: any, values: any): void 
 
 CSL.NameOutput.prototype._checkNickname = function (this: any, name: any): any {
     if (["interview", "personal_communication"].indexOf(this.Item.type) > -1) {
-        var author = "";
+        let author = "";
         author = CSL.Util.Names.getRawName(name);
         if (author && this.state.sys.getAbbreviation && !(this.item && this.item["suppress-author"])) {
-            var normalizedKey = author;
+            let normalizedKey = author;
             if (this.state.sys.normalizeAbbrevsKey) {
                 normalizedKey = this.state.sys.normalizeAbbrevsKey("author", author);
             }
             this.state.transform.loadAbbreviation("default", "nickname", normalizedKey, this.Item.language);
-            var myLocalName = this.state.transform.abbrevs["default"].nickname[normalizedKey];
+            const myLocalName = this.state.transform.abbrevs["default"].nickname[normalizedKey];
             if (myLocalName) {
                 if (myLocalName === "!here>>>") {
                     name = false;

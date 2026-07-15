@@ -5,17 +5,17 @@ CSL.NameOutput.prototype.checkCommonAuthor = function (this: any, requireMatch: 
     if (!requireMatch) {
         return false;
     }
-    var common_term: any = false;
+    let common_term: any = false;
     if (this.variables.length === 2) {
-        var variables = this.variables;
-        var varnames = variables.slice();
+        const variables = this.variables;
+        const varnames = variables.slice();
         varnames.sort();
         common_term = varnames.join("");
     }
     if (!common_term) {
         return false;
     }
-    var has_term = false;
+    let has_term = false;
     if (this.state.locale[this.state.opt.lang].terms[common_term]) {
         has_term = true;
     }
@@ -24,9 +24,9 @@ CSL.NameOutput.prototype.checkCommonAuthor = function (this: any, requireMatch: 
         this.state.tmp.done_vars.push(this.variables[1]);
         return false;
     }
-    var firstSet = this.Item[this.variables[0]];
-    var secondSet = this.Item[this.variables[1]];
-    var perfectMatch = this._compareNamesets(firstSet, secondSet);
+    const firstSet = this.Item[this.variables[0]];
+    const secondSet = this.Item[this.variables[1]];
+    const perfectMatch = this._compareNamesets(firstSet, secondSet);
     if (perfectMatch === true) {
         this.state.tmp.done_vars.push(this.variables[0]);
         this.state.tmp.done_vars.push(this.variables[1]);
@@ -39,15 +39,15 @@ CSL.NameOutput.prototype.checkCommonAuthor = function (this: any, requireMatch: 
 };
 
 CSL.NameOutput.prototype.setCommonTerm = function (this: any): void {
-    var variables = this.variables;
-    var varnames = variables.slice();
+    const variables = this.variables;
+    const varnames = variables.slice();
     varnames.sort();
     this.common_term = varnames.join("");
     // When no varnames are on offer
     if (!this.common_term) {
         return;
     }
-    var has_term = false;
+    let has_term = false;
     if (this.label && this.label[this.variables[0]]) {
         if (this.label[this.variables[0]].before) {
             has_term = this.state.getTerm(this.common_term, this.label[this.variables[0]].before.strings.form, 0);
@@ -63,10 +63,10 @@ CSL.NameOutput.prototype.setCommonTerm = function (this: any): void {
         this.common_term = false;
         return;
     }
-    var freeters_offset = 0;
+    let freeters_offset = 0;
     for (let i = 0, ilen = this.variables.length - 1; i < ilen; i += 1) {
-        var v = this.variables[i];
-        var vv = this.variables[i + 1];
+        const v = this.variables[i];
+        const vv = this.variables[i + 1];
         if (this.freeters[v].length || this.freeters[vv].length) {
             if (this.etal_spec[v].freeters !== this.etal_spec[vv].freeters
                 || !this._compareNamesets(this.freeters[v], this.freeters[vv])) {
@@ -95,7 +95,7 @@ CSL.NameOutput.prototype._compareNamesets = function (this: any, base_nameset: a
     }
     for (let i = 0, ilen = nameset.length; i < ilen; i += 1) {
         for (let j = 0, jlen = CSL.NAME_PARTS.length; j < jlen; j += 1) {
-            var part = CSL.NAME_PARTS[j];
+            const part = CSL.NAME_PARTS[j];
             if (!base_nameset[i] || base_nameset[i][part] != nameset[i][part]) {
                 return false;
             }

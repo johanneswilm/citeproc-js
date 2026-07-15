@@ -2,35 +2,34 @@ import { CSL } from '../csl';
 /*global CSL: true */
 
 CSL.Util.fixDateNode = function (this: any, parent: any, pos: any, node: any): any {
-    var form: any, variable: any, datexml: any, subnode: any, partname: any, attr: any, val: any, prefix: any, suffix: any, children: any, subchildren: any, display: any, cslid: any;
+    const lingo = this.cslXml.getAttributeValue(node, "lingo");
 
-    var lingo = this.cslXml.getAttributeValue(node, "lingo");
-
-    var default_locale = this.cslXml.getAttributeValue(node, "default-locale");
+    const default_locale = this.cslXml.getAttributeValue(node, "default-locale");
 
     this.build.date_key = true;
 
-    form = this.cslXml.getAttributeValue(node, "form");
-    var lingo2;
+    let lingo2;
     if (default_locale) {
         lingo2 = this.opt["default-locale"][0];
     } else {
         lingo2 = this.cslXml.getAttributeValue(node, "lingo");
     }
 
+    const form = this.cslXml.getAttributeValue(node, "form");
+
     if (!this.getDate(form, default_locale)) {
         return parent;
     }
 
-    var dateparts = this.cslXml.getAttributeValue(node, "date-parts");
+    const dateparts = this.cslXml.getAttributeValue(node, "date-parts");
 
-    variable = this.cslXml.getAttributeValue(node, "variable");
-    prefix = this.cslXml.getAttributeValue(node, "prefix");
-    suffix = this.cslXml.getAttributeValue(node, "suffix");
-    display = this.cslXml.getAttributeValue(node, "display");
-    cslid = this.cslXml.getAttributeValue(node, "cslid");
+    const variable = this.cslXml.getAttributeValue(node, "variable");
+    const prefix = this.cslXml.getAttributeValue(node, "prefix");
+    const suffix = this.cslXml.getAttributeValue(node, "suffix");
+    const display = this.cslXml.getAttributeValue(node, "display");
+    const cslid = this.cslXml.getAttributeValue(node, "cslid");
 
-    datexml = this.cslXml.nodeCopy(this.getDate(form, default_locale));
+    const datexml = this.cslXml.nodeCopy(this.getDate(form, default_locale));
     this.cslXml.setAttribute(datexml, "lingo", this.opt.lang);
     this.cslXml.setAttribute(datexml, "form", form);
     this.cslXml.setAttribute(datexml, "date-parts", dateparts);
@@ -47,11 +46,11 @@ CSL.Util.fixDateNode = function (this: any, parent: any, pos: any, node: any): a
         this.cslXml.setAttribute(datexml, "display", display);
     }
 
-    children = this.cslXml.children(datexml);
+    let children = this.cslXml.children(datexml);
     for (let key in children) {
-        subnode = children[key];
+        const subnode = children[key];
         if ("date-part" === this.cslXml.nodename(subnode)) {
-            partname = this.cslXml.getAttributeValue(subnode, "name");
+            const partname = this.cslXml.getAttributeValue(subnode, "name");
             if (default_locale) {
                 this.cslXml.setAttributeOnNodeIdentifiedByNameAttribute(datexml, "date-part", partname, "@default-locale", "true");
             }
@@ -60,10 +59,10 @@ CSL.Util.fixDateNode = function (this: any, parent: any, pos: any, node: any): a
 
     children = this.cslXml.children(node);
     for (let key2 in children) {
-        subnode = children[key2];
+        const subnode = children[key2];
         if ("date-part" === this.cslXml.nodename(subnode)) {
-            partname = this.cslXml.getAttributeValue(subnode, "name");
-            subchildren = this.cslXml.attributes(subnode);
+            const partname = this.cslXml.getAttributeValue(subnode, "name");
+            const subchildren = this.cslXml.attributes(subnode);
             for (let attr in subchildren) {
                 if ("@name" === attr) {
                     continue;
@@ -73,7 +72,7 @@ CSL.Util.fixDateNode = function (this: any, parent: any, pos: any, node: any): a
                         continue;
                     }
                 }
-                val = subchildren[attr];
+                const val = subchildren[attr];
                 this.cslXml.setAttributeOnNodeIdentifiedByNameAttribute(datexml, "date-part", partname, attr, val);
             }
         }
@@ -85,7 +84,7 @@ CSL.Util.fixDateNode = function (this: any, parent: any, pos: any, node: any): a
     } else if ("year-month" === this.cslXml.getAttributeValue(node, "date-parts")) {
         this.cslXml.deleteNodeByNameAttribute(datexml, "day");
     } else if ("month-day" === this.cslXml.getAttributeValue(node, "date-parts")) {
-        var childNodes = this.cslXml.children(datexml);
+        const childNodes = this.cslXml.children(datexml);
         for (let i = 1, ilen = this.cslXml.numberofnodes(childNodes); i < ilen; i += 1) {
             if (this.cslXml.getAttributeValue(childNodes[i], "name") === "year") {
                 this.cslXml.setAttribute(childNodes[i - 1], "suffix", "");

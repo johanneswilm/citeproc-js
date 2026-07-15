@@ -14,7 +14,7 @@ CSL.Node["date-part"] = {
         // Set delimiter here, if poss.
         //
 
-        var date_variable = state.build.date_variables[0];
+        const date_variable = state.build.date_variables[0];
 
         function formatAndStrip(myform, gender, val) {
             if (!val) {
@@ -44,7 +44,7 @@ CSL.Node["date-part"] = {
                 state.tmp.probably_rendered_something = true;
             }
 
-            var last_string_output = "";
+            let last_string_output = "";
 
             first_date = true;
             value = "";
@@ -102,15 +102,15 @@ CSL.Node["date-part"] = {
                 }
 
                 // For gendered locales
-                var monthnameid = ""+state.tmp.date_object.month;
+                let monthnameid = ""+state.tmp.date_object.month;
                 while (monthnameid.length < 2) {
                     monthnameid = "0"+monthnameid;
                 }
                 monthnameid = "month-"+monthnameid;
-                var gender = state.locale[state.opt.lang]["noun-genders"][monthnameid];
+                const gender = state.locale[state.opt.lang]["noun-genders"][monthnameid];
                 if (this.strings.form) {
-                    var myform = this.strings.form;
-                    var myform_end = this.strings.form;
+                    let myform = this.strings.form;
+                    let myform_end = this.strings.form;
                     if (this.strings.name === "day") {
                         if (myform === "ordinal" && state.locale[state.opt.lang].opts["limit-day-ordinals-to-day-1"]) {
                             if (value != 1) {
@@ -158,7 +158,7 @@ CSL.Node["date-part"] = {
                                 // second argument adjusts collapse as required for years
                                 // See OSCOLA section 1.3.2
                                 value_end = state.fun.year_mangler(value + "-" + value_end, true);
-                                var range_delimiter = state.getTerm("year-range-delimiter");
+                                const range_delimiter = state.getTerm("year-range-delimiter");
                                 value_end = value_end.slice(value_end.indexOf(range_delimiter) + 1);
                             }
                             last_string_output = value_end;
