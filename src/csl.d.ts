@@ -96,20 +96,22 @@ interface CslState {
  */
 interface CSLNamespace {
     // --- migrated modules (typed) ---
-    Stack: typeof Stack;
-    Token: typeof Token;
-    Blob: typeof Blob;
-    NumericBlob: typeof NumericBlob;
-    AmbigConfig: typeof AmbigConfig;
-    getSortCompare: (default_locale?: string) => (a: string, b: string) => number;
-    Util: {
+    // These are optional because ``load.ts`` opens the ``CSL`` object before
+    // the modules that populate these members have run.
+    Stack?: typeof Stack;
+    Token?: typeof Token;
+    Blob?: typeof Blob;
+    NumericBlob?: typeof NumericBlob;
+    AmbigConfig?: typeof AmbigConfig;
+    getSortCompare?: (default_locale?: string) => (a: string, b: string) => number;
+    Util?: {
         cloneToken?(token: any): any;
         encodeDoiForUrl?(doi: string): string;
         Match?: any;
         [key: string]: any;
     };
-    Output: {
-        Formatters: Record<string, Formatter>;
+    Output?: {
+        Formatters?: Record<string, Formatter>;
         [key: string]: any;
     };
 
@@ -126,4 +128,26 @@ declare function dump(...args: any[]): void;
 declare var Zotero: any;
 declare var Components: any;
 
-declare const CSL: CSLNamespace;
+/**
+ * Host-runtime globals (Rhino/Narwhal/SpiderMonkey) used by a handful of
+ * modules.  They are never present in the bundled browser/CommonJS builds, so
+ * they are typed as ``any``.
+ */
+declare var DOMParser: any;
+declare var ActiveXObject: any;
+declare var XMLHttpRequest: any;
+declare var marknote: any;
+declare function XML(str: string): any;
+declare function readFile(...args: any[]): any;
+declare function snarf(...args: any[]): any;
+declare function read(...args: any[]): any;
+declare var load: any;
+declare function print(...args: any[]): void;
+
+/**
+ * The single global ``CSL`` namespace.  It is opened (as a ``var``) by
+ * ``load.ts`` and extended by every other module; the index-signature escape
+ * hatch keeps not-yet-migrated code compiling (those references resolve to
+ * ``any``).
+ */
+declare var CSL: CSLNamespace;

@@ -23,6 +23,9 @@ class Token {
     public succeed: any;
     public fail: any;
     public next: any;
+    public juris?: any;
+    public dateparts?: any;
+    public postponed_macro?: any;
 
     constructor(name?: any, tokentype?: any, conditional?: any) {
         /**
@@ -68,14 +71,14 @@ function cloneToken(token: any): any {
         return token;
     }
     newtok = new CSL.Token(token.name, token.tokentype);
-    for (key in token.strings) {
+    for (let key in token.strings) {
         if (token.strings.hasOwnProperty(key)) {
             newtok.strings[key] = token.strings[key];
         }
     }
     if (token.decorations) {
         newtok.decorations = [];
-        for (pos = 0, len = token.decorations.length; pos < len; pos += 1) {
+        for (let pos = 0, len = token.decorations.length; pos < len; pos += 1) {
             newtok.decorations.push(token.decorations[pos].slice());
         }
     }
