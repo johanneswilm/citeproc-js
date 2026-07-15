@@ -11,7 +11,7 @@ class Blob {
     public blobs: any;
     public alldecor: any[];
 
-    constructor(str: any, token: any, levelname: any) {
+    constructor(str: any, token?: any, levelname?: any) {
         this.levelname = levelname;
         if (token) {
             this.strings = { "prefix": "", "suffix": "" };

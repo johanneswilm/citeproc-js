@@ -33,6 +33,22 @@ interface CslItem {
     [key: string]: any;
 }
 
+/**
+ * A parsed CSL node instance.  This is the ``this`` of every
+ * ``CSL.Node.<name>.build``/``configure``/``configure_`` function.  Only the
+ * members read by the migrated leaf builders are pinned down; everything else
+ * falls through the index signature until the owning modules are migrated.
+ */
+interface CslNode {
+    tokentype?: string;
+    name?: string;
+    match?: string;
+    strings?: { [key: string]: any };
+    tests?: any[];
+    execs?: Array<(state: CslState, Item?: CslItem, item?: any) => void>;
+    [key: string]: any;
+}
+
 /** The ``sys`` object supplied by the host application. */
 interface Sys {
     retrieveLocale(lang: string): string | boolean;
@@ -69,7 +85,7 @@ interface CslState {
     registry: any;
     mode: string;
     fresh?(clear?: boolean): void;
-    getTerm(term: string, form?: string, plural?: boolean, gender?: number, mode?: number, forceDefaultLocale?: boolean): any;
+    getTerm(term: string, form?: string, plural?: number | boolean, gender?: number | boolean, mode?: number | boolean, forceDefaultLocale?: boolean): any;
     [key: string]: any;
 }
 
@@ -100,5 +116,14 @@ interface CSLNamespace {
     // --- escape hatch for not-yet-migrated code ---
     [key: string]: any;
 }
+
+/**
+ * Ambient globals referenced by environment shims and not provided by the
+ * configured lib (``ES2018``).
+ */
+declare var console: { log(...args: any[]): void; [key: string]: any };
+declare function dump(...args: any[]): void;
+declare var Zotero: any;
+declare var Components: any;
 
 declare const CSL: CSLNamespace;

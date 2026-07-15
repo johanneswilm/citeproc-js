@@ -19,11 +19,12 @@ class Token {
     // Conditional branching fields (populated at runtime)
     public evaluator: any;
     public tests: any[];
+    public test: any;
     public succeed: any;
     public fail: any;
     public next: any;
 
-    constructor(name: any, tokentype: any, conditional?: any) {
+    constructor(name?: any, tokentype?: any, conditional?: any) {
         /**
          * Name of the element.
          * <p>This corresponds to the element name of the
