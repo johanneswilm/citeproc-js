@@ -1,5 +1,5 @@
 import { CSL } from '../csl';
-/*global CSL: true */
+import { Output_formatters } from './formatters';
 
 /**
  * Output specifications.
@@ -31,7 +31,7 @@ class OutputFormats {
     "@font-style/oblique": "<em>%%STRING%%</em>",
     "@font-style/normal": "<span style=\"font-style:normal;\">%%STRING%%</span>",
     "@font-variant/small-caps": "<span style=\"font-variant:small-caps;\">%%STRING%%</span>",
-    "@passthrough/true": CSL.Output.Formatters.passthrough,
+    "@passthrough/true": Output_formatters.passthrough,
     "@font-variant/normal": "<span style=\"font-variant:normal;\">%%STRING%%</span>",
     "@font-weight/bold": "<b>%%STRING%%</b>",
     "@font-weight/normal": "<span style=\"font-weight:normal;\">%%STRING%%</span>",
@@ -41,8 +41,8 @@ class OutputFormats {
     "@vertical-align/sup": "<sup>%%STRING%%</sup>",
     "@vertical-align/sub": "<sub>%%STRING%%</sub>",
     "@vertical-align/baseline": "<span style=\"baseline\">%%STRING%%</span>",
-    "@strip-periods/true": CSL.Output.Formatters.passthrough,
-    "@strip-periods/false": CSL.Output.Formatters.passthrough,
+    "@strip-periods/true": Output_formatters.passthrough,
+    "@strip-periods/false": Output_formatters.passthrough,
     "@quotes/true": function (state: CslState, str?: string): string | false {
         if ("undefined" === typeof str) {
             return state.getTerm("open-quote");
@@ -128,7 +128,7 @@ class OutputFormats {
     "@font-style/oblique": false,
     "@font-style/normal": false,
     "@font-variant/small-caps": false,
-    "@passthrough/true": CSL.Output.Formatters.passthrough,
+    "@passthrough/true": Output_formatters.passthrough,
     "@font-variant/normal": false,
     "@font-weight/bold": false,
     "@font-weight/normal": false,
@@ -138,8 +138,8 @@ class OutputFormats {
     "@vertical-align/baseline": false,
     "@vertical-align/sup": false,
     "@vertical-align/sub": false,
-    "@strip-periods/true": CSL.Output.Formatters.passthrough,
-    "@strip-periods/false": CSL.Output.Formatters.passthrough,
+    "@strip-periods/true": Output_formatters.passthrough,
+    "@strip-periods/false": Output_formatters.passthrough,
     "@quotes/true": function (state: CslState, str?: string): string | false {
         if ("undefined" === typeof str) {
             return state.getTerm("open-quote");
@@ -198,7 +198,7 @@ class OutputFormats {
                 function (aChar: string) { return "\\uc0\\u" + aChar.charCodeAt(0).toString() + "{}"; })
             .split("\t").join("\\tab{}");
     },
-    "@passthrough/true": CSL.Output.Formatters.passthrough,
+    "@passthrough/true": Output_formatters.passthrough,
     "@font-style/italic": "{\\i{}%%STRING%%}",
     "@font-style/normal": "{\\i0{}%%STRING%%}",
     "@font-style/oblique": "{\\i{}%%STRING%%}",
@@ -212,8 +212,8 @@ class OutputFormats {
     "@vertical-align/baseline": false,
     "@vertical-align/sup": "\\super %%STRING%%\\nosupersub{}",
     "@vertical-align/sub": "\\sub %%STRING%%\\nosupersub{}",
-    "@strip-periods/true": CSL.Output.Formatters.passthrough,
-    "@strip-periods/false": CSL.Output.Formatters.passthrough,
+    "@strip-periods/true": Output_formatters.passthrough,
+    "@strip-periods/false": Output_formatters.passthrough,
     "@quotes/true": function (state: CslState, str?: string): string | false {
         if ("undefined" === typeof str) {
             return CSL.Output.Formats.rtf.text_escape(state.getTerm("open-quote"));
@@ -290,7 +290,7 @@ class OutputFormats {
     },
     "bibstart": "",
     "bibend": "",
-    "@passthrough/true": CSL.Output.Formatters.passthrough,
+    "@passthrough/true": Output_formatters.passthrough,
     "@font-style/italic": "__%%STRING%%__",
     "@font-style/oblique": "__%%STRING%%__",
     "@font-style/normal": false,
@@ -304,8 +304,8 @@ class OutputFormats {
     "@vertical-align/sup": "^^%%STRING%%^^",
     "@vertical-align/sub": "~~%%STRING%%~~",
     "@vertical-align/baseline": false,
-    "@strip-periods/true": CSL.Output.Formatters.passthrough,
-    "@strip-periods/false": CSL.Output.Formatters.passthrough,
+    "@strip-periods/true": Output_formatters.passthrough,
+    "@strip-periods/false": Output_formatters.passthrough,
     "@quotes/true": function (state: CslState, str?: string): string | false {
         if ("undefined" === typeof str) {
             return "``";
@@ -383,7 +383,7 @@ class OutputFormats {
     },
     "bibstart": "",
     "bibend": "",
-    "@passthrough/true": CSL.Output.Formatters.passthrough,
+    "@passthrough/true": Output_formatters.passthrough,
     "@font-style/italic": "<fo:inline font-style=\"italic\">%%STRING%%</fo:inline>",
     "@font-style/oblique": "<fo:inline font-style=\"oblique\">%%STRING%%</fo:inline>",
     "@font-style/normal": "<fo:inline font-style=\"normal\">%%STRING%%</fo:inline>",
@@ -397,8 +397,8 @@ class OutputFormats {
     "@vertical-align/sup": "<fo:inline vertical-align=\"super\">%%STRING%%</fo:inline>",
     "@vertical-align/sub": "<fo:inline vertical-align=\"sub\">%%STRING%%</fo:inline>",
     "@vertical-align/baseline": "<fo:inline vertical-align=\"baseline\">%%STRING%%</fo:inline>",
-    "@strip-periods/true": CSL.Output.Formatters.passthrough,
-    "@strip-periods/false": CSL.Output.Formatters.passthrough,
+    "@strip-periods/true": Output_formatters.passthrough,
+    "@strip-periods/false": Output_formatters.passthrough,
     "@quotes/true": function (state: CslState, str?: string): string | false {
         if ("undefined" === typeof str) {
             return state.getTerm("open-quote");
@@ -495,7 +495,7 @@ class OutputFormats {
     "@font-style/oblique": false,
     "@font-style/normal": false,
     "@font-variant/small-caps": false,
-    "@passthrough/true": CSL.Output.Formatters.passthrough,
+    "@passthrough/true": Output_formatters.passthrough,
     "@font-variant/normal": false,
     "@font-weight/bold": "{\\bf %%STRING%%}",
     "@font-weight/normal": false,
@@ -505,8 +505,8 @@ class OutputFormats {
     "@vertical-align/baseline": false,
     "@vertical-align/sup": false,
     "@vertical-align/sub": false,
-    "@strip-periods/true": CSL.Output.Formatters.passthrough,
-    "@strip-periods/false": CSL.Output.Formatters.passthrough,
+    "@strip-periods/true": Output_formatters.passthrough,
+    "@strip-periods/false": Output_formatters.passthrough,
     "@quotes/true": function (state: CslState, str?: string): string | false {
         if ("undefined" === typeof str) {
             return state.getTerm("open-quote");

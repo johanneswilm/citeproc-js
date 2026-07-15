@@ -1272,3 +1272,123 @@ Attributes["@line-spacing"] = function (state, arg) {
         state[this.name].opt["line-spacing"] = parseFloat(arg);
     }
 };
+
+Attributes["@default-locale"] = function (state, arg) {
+    if (this.name === "style") {
+        let lst: any, len: number, ret: any;
+        const m = arg.match(/-x-(sort|translit|translat)-/g);
+        if (m) {
+            for (let pos2 = 0, len2 = m.length; pos2 < len2; pos2 += 1) {
+                m[pos2] = m[pos2].replace(/^-x-/, "").replace(/-$/, "");
+            }
+        }
+        lst = arg.split(/-x-(?:sort|translit|translat)-/);
+        ret = [lst[0]];
+        for (let pos2 = 1, len2 = lst.length; pos2 < len2; pos2 += 1) {
+            ret.push(m[pos2 - 1]);
+            ret.push(lst[pos2]);
+        }
+        lst = ret.slice();
+        len = lst.length;
+        for (let pos2 = 1; pos2 < len; pos2 += 2) {
+            state.opt["locale-" + lst[pos2]].push(lst[pos2 + 1].replace(/^\s*/g, "").replace(/\s*$/g, ""));
+        }
+        if (lst.length) {
+            state.opt["default-locale"] = lst.slice(0, 1);
+        } else {
+            state.opt["default-locale"] = ["en"];
+        }
+    } else if (arg === "true") {
+        this.default_locale = true;
+    }
+};
+
+Attributes["@default-locale-sort"] = function (state, arg) {
+    state.opt["default-locale-sort"] = arg;
+};
+
+Attributes["@demote-non-dropping-particle"] = function (state, arg) {
+    state.opt["demote-non-dropping-particle"] = arg;
+};
+
+Attributes["@initialize-with-hyphen"] = function (state, arg) {
+    if (arg === "false") {
+        state.opt["initialize-with-hyphen"] = false;
+    }
+};
+
+Attributes["@katakana-display"] = function (state, arg) {
+    state.opt["katakana-display"] = arg;
+};
+
+Attributes["@page-range-format"] = function (state, arg) {
+    state.opt["page-range-format"] = arg;
+};
+
+Attributes["@institution-parts"] = function (state, arg) {
+    this.strings["institution-parts"] = arg;
+};
+
+Attributes["@if-short"] = function (state, arg) {
+    if (arg === "true") {
+        this.strings["if-short"] = true;
+    }
+};
+
+Attributes["@substitute-use-first"] = function (state, arg) {
+    this.strings["substitute-use-first"] = parseInt(arg, 10);
+};
+
+Attributes["@use-first"] = function (state, arg) {
+    this.strings["use-first"] = parseInt(arg, 10);
+};
+
+Attributes["@use-last"] = function (state, arg) {
+    this.strings["use-last"] = parseInt(arg, 10);
+};
+
+Attributes["@stop-first"] = function (state, arg) {
+    this.strings["stop-first"] = parseInt(arg, 10);
+};
+
+Attributes["@stop-last"] = function (state, arg) {
+    this.strings["stop-last"] = parseInt(arg, 10);
+};
+
+Attributes["@text-case"] = function (state, arg) {
+    this.strings["text-case"] = arg;
+};
+
+Attributes["@entry-spacing"] = function (state, arg) {
+    if (arg && arg.match(/^[.0-9]+$/)) {
+        state[this.name].opt["entry-spacing"] = parseFloat(arg);
+    }
+};
+
+Attributes["@display"] = function (state, arg) {
+    if (["block", "left-margin", "right-inline", "indent"].indexOf(arg) > -1) {
+        this.strings["display"] = arg;
+    }
+};
+
+Attributes["@reverse-order"] = function (state, arg) {
+    if (arg === "true") {
+        this.strings["reverse-order"] = true;
+    }
+};
+
+Attributes["@near-note-distance"] = function (state, arg) {
+    if (arg && arg.match(/^[.0-9]+$/)) {
+        state.opt["near-note-distance"] = parseInt(arg, 10);
+    }
+};
+
+Attributes["@substring"] = function (state, arg) {
+    if (arg && arg.match(/^[0-9]+$/)) {
+        this.strings["substring"] = parseInt(arg, 10);
+    }
+};
+
+Attributes["@year-range-format"] = function (state, arg) {
+    state.opt["year-range-format"] = arg;
+};

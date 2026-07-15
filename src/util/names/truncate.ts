@@ -82,11 +82,12 @@ export function truncatePersonalNameLists(this: any): void {
     }
 
     for (let i = 0, ilen = this.variables.length; i < ilen; i += 1) {
-        if (this.institutions[v].length) {
+        const curVar = this.variables[i];
+        if (this.institutions[curVar] && this.institutions[curVar].length) {
             this.nameset_offset += 1;
         }
-        for (let j3 = 0, jlen3 = this.persons[v].length; j3 < jlen3; j3 += 1) {
-            if (this.persons[v][j3].length) {
+        for (let j3 = 0, jlen3 = (this.persons[curVar] || []).length; j3 < jlen3; j3 += 1) {
+            if (this.persons[curVar][j3].length) {
                 this.nameset_offset += 1;
             }
         }

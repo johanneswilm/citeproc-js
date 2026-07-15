@@ -501,9 +501,9 @@ export function processCitationCluster(this: any, citation: any, citationsPre: a
                         //
                         let ibidme = false;
                         let suprame = false;
-                        const prevCitation = null;
+                        let prevCitation = null;
                         if (j > 0) {
-                            const prevCitation = citations[j-1];
+                            prevCitation = citations[j-1];
                         }
                         const thisCitation = citations[j];
                         // XXX Ugly, but This is used in the second else-if branch condition below.
