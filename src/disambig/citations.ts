@@ -1,7 +1,7 @@
 import { CSL } from '../csl';
 /*global CSL: true */
 
-CSL.Registry.CitationReg = function () {
+export function CitationReg(state?: any) {
     this.citationById = {};
     this.citationByIndex = [];
 };

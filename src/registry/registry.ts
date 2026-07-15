@@ -1,4 +1,7 @@
 import { CSL } from '../csl';
+import { NameReg } from '../disambig/names';
+import { CitationReg } from '../disambig/citations';
+
 /*global CSL: true */
 
 
@@ -57,725 +60,753 @@ import { CSL } from '../csl';
  * through the registry item.</p>
  * @class
  */
-CSL.Registry = function (state) {
-    this.debug = false;
-    this.state = state;
-    this.registry = {};
-    this.reflist = [];
-    this.refhash = {};
-    this.namereg = new CSL.Registry.NameReg(state);
-    this.citationreg = new CSL.Registry.CitationReg(state);
-    // See CSL.NameOutput.prototype.outputNames
-    // and CSL.Registry.prototype.doinserts
-    this.authorstrings = {};
-    
-    // for parallel delimiter support
-    this.masterMap = {};
-    
-    //
-    // shared scratch vars
-    this.mylist = [];
-    this.myhash = {};
-    this.deletes = [];
-    this.inserts = [];
-    this.uncited = {};
-    this.refreshes = {};
-    this.akeys = {};
-    this.oldseq = {};
-    this.return_data = {};
-    //
-    // each ambig is a list of the ids of other objects
-    // that have the same base-level rendering
-    this.ambigcites = {};
-    this.ambigresets = {};
-    this.sorter = new CSL.Registry.Comparifier(state, "bibliography_sort");
-    //this.modes = CSL.getModes.call(this.state);
-    //this.checkerator = new CSL.Checkerator();
+export class Registry {
+    debug: any;
+    state: any;
+    registry: any;
+    reflist: any;
+    refhash: any;
+    namereg: any;
+    citationreg: any;
+    authorstrings: any;
+    masterMap: any;
+    mylist: any;
+    myhash: any;
+    deletes: any;
+    inserts: any;
+    uncited: any;
+    refreshes: any;
+    akeys: any;
+    oldseq: any;
+    return_data: any;
+    ambigcites: any;
+    ambigresets: any;
+    sorter: any;
+    touched: any;
+    ambigsTouched: any;
+    reflist_inserts: any;
 
-    this.getSortedIds = function () {
+    constructor(state: any) {
+        this.debug = false;
+        this.state = state;
+        this.registry = {};
+        this.reflist = [];
+        this.refhash = {};
+        this.namereg = new NameReg(state);
+        this.citationreg = new CitationReg(state);
+        // See CSL.NameOutput.prototype.outputNames
+        // and CSL.Registry.prototype.doinserts
+        this.authorstrings = {};
+
+        // for parallel delimiter support
+        this.masterMap = {};
+
+        //
+        // shared scratch vars
+        this.mylist = [];
+        this.myhash = {};
+        this.deletes = [];
+        this.inserts = [];
+        this.uncited = {};
+        this.refreshes = {};
+        this.akeys = {};
+        this.oldseq = {};
+        this.return_data = {};
+        //
+        // each ambig is a list of the ids of other objects
+        // that have the same base-level rendering
+        this.ambigcites = {};
+        this.ambigresets = {};
+        this.sorter = new Comparifier(state, "bibliography_sort");
+        //this.modes = CSL.getModes.call(this.state);
+        //this.checkerator = new CSL.Checkerator();
+    }
+
+    getSortedIds() {
         let ret = [];
         for (let i = 0, ilen = this.reflist.length; i < ilen; i += 1) {
             ret.push("" + this.reflist[i].id);
         }
         return ret;
-    };
+    }
 
-    this.getSortedRegistryItems = function () {
+    getSortedRegistryItems() {
         let ret = [];
         for (let i = 0, ilen = this.reflist.length; i < ilen; i += 1) {
             ret.push(this.reflist[i]);
         }
         return ret;
-    };
-};
-
-//
-// Here's the sequence of operations to be performed on
-// update:
-//
-//  1.  (o) [init] Receive list as function argument, store as hash and as list.
-//  2.  (o) [init] Initialize refresh list.  Never needs sorting, only hash required.
-
-//  3.  (o) [dodeletes] Delete loop.
-//  3a. (o) [dodeletes] Delete names in items to be deleted from names reg.
-//  3b. (o) [dodeletes] Complement refreshes list with items affected by
-//      possible name changes.  We'll actually perform the refresh once
-//      all of the necessary data and parameters have been established
-//      in the registry.
-//  3c. (o) [dodeletes] Delete all items to be deleted from their disambig pools.
-//  3d. (o) [dodeletes] Delete all items in deletion list from hash.
-
-//  4.  (o) [doinserts] Insert loop.
-//  4a. (o) [doinserts] Retrieve entries for items to insert.
-//  4b. (o) [doinserts] Generate ambig key.
-//  4c. (o) [doinserts] Add names in items to be inserted to names reg
-//      (implicit in getAmbiguousCite).
-//  4d. (o) [doinserts] Record ambig pool key on akey list (used for updating further
-//      down the chain).
-//  4e. (o) [doinserts] Create registry token.
-//  4f. (o) [doinserts] Add item ID to hash.
-//  4g. (o) [doinserts] Set and record the base token to hold disambiguation
-//      results ("disambig" in the object above).
-//  5.  (o) [rebuildlist] Create "new" list of hash pointers, in the order given
-//          in the argument to the update function.
-//  6.  (o) [rebuildlist] Apply citation numbers to new list.
-//  7.  (o) [dorefreshes] Refresh items requiring update.
-
-
-
-//  5. (o) [delnames] Delete names in items to be deleted from names reg, and obtain IDs
-//         of other items that would be affected by changes around that surname.
-//  6. (o) [delnames] Complement delete and insert lists with items affected by
-//         possible name changes.
-//  7. (o) [delambigs] Delete all items to be deleted from their disambig pools.
-//  8. (o) [delhash] Delete all items in deletion list from hash.
-
-//  9. (o) [addtohash] Retrieve entries for items to insert.
-// 10. (o) [addtohash] Add items to be inserted to their disambig pools.
-// 11. (o) [addtohash] Add names in items to be inserted to names reg
-//         (implicit in getAmbiguousCite).
-// 12. (o) [addtohash] Create registry token for each item to be inserted.
-// 13. (o) [addtohash] Add items for insert to hash.
-
-// 14. (o) [buildlist] Create "new" list of hash pointers, in the order given in the argument
-//         to the update function.
-// 15. (o) [renumber] Apply citation numbers to new list.
-// 16. (o) [setdisambigs] Set disambiguation parameters on each inserted item token.
-// 17. (o) [setsortkeys] Set sort keys on each item token.
-// 18. (o) [sorttokens] Resort token list
-// 19. (o) [renumber] Reset citation numbers on list items
-//
-
-CSL.Registry.prototype.init = function (itemIDs, uncited_flag) {
-    let i, ilen;
-    this.oldseq = {};
-    //  1. Receive list as function argument, store as hash and as list.
-    //
-    // Result:
-    //   this.mylist: a list of all itemIDs of referenced items, cited and uncited.
-    //   this.myhash: a hash of index positions in this.mylist.
-    //   this.uncited: hash of uncited itemIDs.
-    //
-    // Proceed as follows.
-    //
-    if (uncited_flag) {
-        // If uncited_flag is non-nil, add any missing itemIDs to this.mylist
-        // from itemIDs input list, and set the itemIDs in itemIDs on this.uncited.
-        this.uncited = {};
-        for (let i=0,ilen=itemIDs.length;i<ilen; i += 1) {
-            if (!this.myhash[itemIDs[i]]) {
-                this.mylist.push("" + itemIDs[i]);
-            }
-            this.uncited[itemIDs[i]] = true;
-            this.myhash[itemIDs[i]] = true;
-        }
-    } else {
-        // If uncited_flag is nil, remove duplicate itemIDs from itemIDs input
-        // list, set the result on this.mylist, and add missing itemIDs to
-        // this.mylist from itemIDs input list.
-        for (let key in this.uncited) {
-            itemIDs.push(key);
-        }
-        let myhash = {};
-        for (let i=itemIDs.length-1;i>-1; i += -1) {
-            if (myhash[itemIDs[i]]) {
-                itemIDs = itemIDs.slice(0, i).concat(itemIDs.slice(i + 1));
-            } else {
-                myhash[itemIDs[i]] = true;
-            }
-        }
-        this.mylist = itemIDs;
-        this.myhash = myhash;
     }
-    //
-    //  2. Initialize refresh list.  Never needs sorting, only hash required.
-    //
-    this.refreshes = {};
-    this.touched = {};
-    this.ambigsTouched = {};
-    this.ambigresets = {};
-};
 
-CSL.Registry.prototype.dopurge = function (myhash) {
-    // Remove any uncited items not in myhash
-    for (let i=this.mylist.length-1;i>-1;i+=-1) {
-        // Might not want to be quite this restrictive.
-        if (this.citationreg.citationsByItemId) {
-            if ((!this.citationreg.citationsByItemId || !this.citationreg.citationsByItemId[this.mylist[i]]) && !myhash[this.mylist[i]]) {
-                delete this.myhash[this.mylist[i]];
-                delete this.uncited[this.mylist[i]];
-                this.mylist = this.mylist.slice(0,i).concat(this.mylist.slice(i+1));
+    //
+    // Here's the sequence of operations to be performed on
+    // update:
+    //
+    //  1.  (o) [init] Receive list as function argument, store as hash and as list.
+    //  2.  (o) [init] Initialize refresh list.  Never needs sorting, only hash required.
+
+    //  3.  (o) [dodeletes] Delete loop.
+    //  3a. (o) [dodeletes] Delete names in items to be deleted from names reg.
+    //  3b. (o) [dodeletes] Complement refreshes list with items affected by
+    //      possible name changes.  We'll actually perform the refresh once
+    //      all of the necessary data and parameters have been established
+    //      in the registry.
+    //  3c. (o) [dodeletes] Delete all items to be deleted from their disambig pools.
+    //  3d. (o) [dodeletes] Delete all items in deletion list from hash.
+
+    //  4.  (o) [doinserts] Insert loop.
+    //  4a. (o) [doinserts] Retrieve entries for items to insert.
+    //  4b. (o) [doinserts] Generate ambig key.
+    //  4c. (o) [doinserts] Add names in items to be inserted to names reg
+    //      (implicit in getAmbiguousCite).
+    //  4d. (o) [doinserts] Record ambig pool key on akey list (used for updating further
+    //      down the chain).
+    //  4e. (o) [doinserts] Create registry token.
+    //  4f. (o) [doinserts] Add item ID to hash.
+    //  4g. (o) [doinserts] Set and record the base token to hold disambiguation
+    //      results ("disambig" in the object above).
+    //  5.  (o) [rebuildlist] Create "new" list of hash pointers, in the order given
+    //          in the argument to the update function.
+    //  6.  (o) [rebuildlist] Apply citation numbers to new list.
+    //  7.  (o) [dorefreshes] Refresh items requiring update.
+
+
+    //  5. (o) [delnames] Delete names in items to be deleted from names reg, and obtain IDs
+    //         of other items that would be affected by changes around that surname.
+    //  6. (o) [delnames] Complement delete and insert lists with items affected by
+    //         possible name changes.
+    //  7. (o) [delambigs] Delete all items to be deleted from their disambig pools.
+    //  8. (o) [delhash] Delete all items in deletion list from hash.
+
+    //  9. (o) [addtohash] Retrieve entries for items to insert.
+    // 10. (o) [addtohash] Add items to be inserted to their disambig pools.
+    // 11. (o) [addtohash] Add names in items to be inserted to names reg
+    //         (implicit in getAmbiguousCite).
+    // 12. (o) [addtohash] Create registry token for each item to be inserted.
+    // 13. (o) [addtohash] Add items for insert to hash.
+
+    // 14. (o) [buildlist] Create "new" list of hash pointers, in the order given in the argument
+    //         to the update function.
+    // 15. (o) [renumber] Apply citation numbers to new list.
+    // 16. (o) [setdisambigs] Set disambiguation parameters on each inserted item token.
+    // 17. (o) [setsortkeys] Set sort keys on each item token.
+    // 18. (o) [sorttokens] Resort token list
+    // 19. (o) [renumber] Reset citation numbers on list items
+    //
+
+    init(itemIDs: any, uncited_flag: any) {
+        let i, ilen;
+        this.oldseq = {};
+        //  1. Receive list as function argument, store as hash and as list.
+        //
+        // Result:
+        //   this.mylist: a list of all itemIDs of referenced items, cited and uncited.
+        //   this.myhash: a hash of index positions in this.mylist.
+        //   this.uncited: hash of uncited itemIDs.
+        //
+        // Proceed as follows.
+        //
+        if (uncited_flag) {
+            // If uncited_flag is non-nil, add any missing itemIDs to this.mylist
+            // from itemIDs input list, and set the itemIDs in itemIDs on this.uncited.
+            this.uncited = {};
+            for (let i=0,ilen=itemIDs.length;i<ilen; i += 1) {
+                if (!this.myhash[itemIDs[i]]) {
+                    this.mylist.push("" + itemIDs[i]);
+                }
+                this.uncited[itemIDs[i]] = true;
+                this.myhash[itemIDs[i]] = true;
+            }
+        } else {
+            // If uncited_flag is nil, remove duplicate itemIDs from itemIDs input
+            // list, set the result on this.mylist, and add missing itemIDs to
+            // this.mylist from itemIDs input list.
+            for (let key in this.uncited) {
+                itemIDs.push(key);
+            }
+            let myhash = {};
+            for (let i=itemIDs.length-1;i>-1; i += -1) {
+                if (myhash[itemIDs[i]]) {
+                    itemIDs = itemIDs.slice(0, i).concat(itemIDs.slice(i + 1));
+                } else {
+                    myhash[itemIDs[i]] = true;
+                }
+            }
+            this.mylist = itemIDs;
+            this.myhash = myhash;
+        }
+        //
+        //  2. Initialize refresh list.  Never needs sorting, only hash required.
+        //
+        this.refreshes = {};
+        this.touched = {};
+        this.ambigsTouched = {};
+        this.ambigresets = {};
+    }
+
+    dopurge(myhash: any) {
+        // Remove any uncited items not in myhash
+        for (let i=this.mylist.length-1;i>-1;i+=-1) {
+            // Might not want to be quite this restrictive.
+            if (this.citationreg.citationsByItemId) {
+                if ((!this.citationreg.citationsByItemId || !this.citationreg.citationsByItemId[this.mylist[i]]) && !myhash[this.mylist[i]]) {
+                    delete this.myhash[this.mylist[i]];
+                    delete this.uncited[this.mylist[i]];
+                    this.mylist = this.mylist.slice(0,i).concat(this.mylist.slice(i+1));
+                }
             }
         }
+        this.dodeletes(this.myhash);
     }
-    this.dodeletes(this.myhash);
-};
 
-CSL.Registry.prototype.dodeletes = function (myhash) {
-    let otheritems, key, ambig, pos, len, items, kkey, mypos, id;
-    if ("string" === typeof myhash) {
-        let key = myhash;
-        myhash = {};
-        myhash[key] = true;
-    }
-    //
-    //  3. Delete loop.
-    //
-    for (let key in this.registry) {
-        if (!myhash[key]) {
-            // skip items explicitly marked as uncited
-            if (this.uncited[key]) {
-                continue;
-            }
-            //
-            //  3a. Delete names in items to be deleted from names reg.
-            //
-            otheritems = this.namereg.delitems(key);
-            //
-            //  3b. Complement refreshes list with items affected by
-            //      possible name changes.  We'll actually perform the refresh once
-            //      all of the necessary data and parameters have been established
-            //      in the registry.
-            //
-            for (let kkey in otheritems) {
-                this.refreshes[kkey] = true;
-            }
-            //
-            //  3c. Delete all items to be deleted from their disambig pools.
-            //
-            ambig = this.registry[key].ambig;
-            mypos = this.ambigcites[ambig].indexOf(key);
-            if (mypos > -1) {
-                items = this.ambigcites[ambig].slice();
-                this.ambigcites[ambig] = items.slice(0, mypos).concat(items.slice(mypos+1, items.length));
-                this.ambigresets[ambig] = this.ambigcites[ambig].length;
-            }
-            //
-            // XX. What we've missed is to provide an update of all
-            // items sharing the same ambig  += -1 the remaining items in
-            // ambigcites.  So let's do that here, just in case the
-            // names update above doesn't catch them all.
-            //
-            len = this.ambigcites[ambig].length;
-            for (let pos = 0; pos < len; pos += 1) {
-                id = "" + this.ambigcites[ambig][pos];
-                this.refreshes[id] = true;
-            }
-            //
-            // 3d-0. Remove parallel id references and realign
-            // parallel ID refs.
-            //
-            if (this.registry[key].siblings) {
-                if (this.registry[key].siblings.length == 1) {
-                    const loneSiblingID = this.registry[key].siblings[0];
-                    if (this.registry[loneSiblingID].siblings) {
-                        this.registry[loneSiblingID].siblings.pop();
-                        this.registry[loneSiblingID].master = true;
-                        // this.registry[loneSiblingID].parallel = false;
-                    }
-                } else if (this.registry[key].siblings.length > 1) {
-                    const removeIDs = [key];
-                    if (this.registry[key].master) {
-                        const newmasterID = this.registry[key].siblings[0];
-                        const newmaster = this.registry[newmasterID];
-                        newmaster.master = true;
-                        // newmaster.parallel_delimiter is set externally, if at all
-                        // newmaster.parallel = false;
-                        removeIDs.push(newmasterID);
-                        // for (let k = 0, klen = this.registry[key].siblings.length; k < klen; k += 1) {
-                        //     this.registry[this.registry[key].siblings[k]].parallel = newmasterID;
-                        // }
-                    }
-                    const buffer = [];
-                    for (let k = this.registry[key].siblings.length - 1; k > -1; k += -1) {
-                        const siblingID = this.registry[key].siblings.pop();
-                        if (removeIDs.indexOf(siblingID) === -1) {
-                            buffer.push(siblingID);
+    dodeletes(myhash: any) {
+        let otheritems, key, ambig, pos, len, items, kkey, mypos, id;
+        if ("string" === typeof myhash) {
+            let key = myhash;
+            myhash = {};
+            myhash[key] = true;
+        }
+        //
+        //  3. Delete loop.
+        //
+        for (let key in this.registry) {
+            if (!myhash[key]) {
+                // skip items explicitly marked as uncited
+                if (this.uncited[key]) {
+                    continue;
+                }
+                //
+                //  3a. Delete names in items to be deleted from names reg.
+                //
+                otheritems = this.namereg.delitems(key);
+                //
+                //  3b. Complement refreshes list with items affected by
+                //      possible name changes.  We'll actually perform the refresh once
+                //      all of the necessary data and parameters have been established
+                //      in the registry.
+                //
+                for (let kkey in otheritems) {
+                    this.refreshes[kkey] = true;
+                }
+                //
+                //  3c. Delete all items to be deleted from their disambig pools.
+                //
+                ambig = this.registry[key].ambig;
+                mypos = this.ambigcites[ambig].indexOf(key);
+                if (mypos > -1) {
+                    items = this.ambigcites[ambig].slice();
+                    this.ambigcites[ambig] = items.slice(0, mypos).concat(items.slice(mypos+1, items.length));
+                    this.ambigresets[ambig] = this.ambigcites[ambig].length;
+                }
+                //
+                // XX. What we've missed is to provide an update of all
+                // items sharing the same ambig  += -1 the remaining items in
+                // ambigcites.  So let's do that here, just in case the
+                // names update above doesn't catch them all.
+                //
+                len = this.ambigcites[ambig].length;
+                for (let pos = 0; pos < len; pos += 1) {
+                    id = "" + this.ambigcites[ambig][pos];
+                    this.refreshes[id] = true;
+                }
+                //
+                // 3d-0. Remove parallel id references and realign
+                // parallel ID refs.
+                //
+                if (this.registry[key].siblings) {
+                    if (this.registry[key].siblings.length == 1) {
+                        const loneSiblingID = this.registry[key].siblings[0];
+                        if (this.registry[loneSiblingID].siblings) {
+                            this.registry[loneSiblingID].siblings.pop();
+                            this.registry[loneSiblingID].master = true;
+                            // this.registry[loneSiblingID].parallel = false;
+                        }
+                    } else if (this.registry[key].siblings.length > 1) {
+                        const removeIDs = [key];
+                        if (this.registry[key].master) {
+                            const newmasterID = this.registry[key].siblings[0];
+                            const newmaster = this.registry[newmasterID];
+                            newmaster.master = true;
+                            // newmaster.parallel_delimiter is set externally, if at all
+                            // newmaster.parallel = false;
+                            removeIDs.push(newmasterID);
+                            // for (let k = 0, klen = this.registry[key].siblings.length; k < klen; k += 1) {
+                            //     this.registry[this.registry[key].siblings[k]].parallel = newmasterID;
+                            // }
+                        }
+                        const buffer = [];
+                        for (let k = this.registry[key].siblings.length - 1; k > -1; k += -1) {
+                            const siblingID = this.registry[key].siblings.pop();
+                            if (removeIDs.indexOf(siblingID) === -1) {
+                                buffer.push(siblingID);
+                            }
+                        }
+                        for (let k = buffer.length - 1; k > -1; k += -1) {
+                            this.registry[key].siblings.push(buffer[k]);
                         }
                     }
-                    for (let k = buffer.length - 1; k > -1; k += -1) {
-                        this.registry[key].siblings.push(buffer[k]);
-                    }
                 }
-            }
-            //
-            // 3d-1. Remove item from reflist
-            for (let i=this.reflist.length-1;i>-1;i--) {
-                if (this.reflist[i].id === key) {
-                    this.reflist = this.reflist.slice(0, i).concat(this.reflist.slice(i+1));
-                }
-            }
-            //
-            //  3d. Delete all items in deletion list from hash.
-            //
-            delete this.registry[key];
-            delete this.refhash[key];
-
-            // For processCitationCluster()
-            this.return_data.bibchange = true;
-        }
-    }
-    // Disabled.  See formats.js for code.
-    // this.state.fun.decorate.items_delete( this.state.output[this.state.opt.mode].tmp, myhash );
-};
-
-CSL.Registry.prototype.doinserts = function (mylist) {
-    let item, Item, akey, newitem, abase, i, ilen;
-    if ("string" === typeof mylist) {
-        mylist = [mylist];
-    }
-    //
-    //  4. Insert loop.
-    //
-    for (let i = 0, ilen = mylist.length; i < ilen; i += 1) {
-        item = mylist[i];
-        if (!this.registry[item]) {
-            //
-            //  4a. Retrieve entries for items to insert.
-            //
-            Item = this.state.retrieveItem(item);
-
-            //
-            //  4b. Generate ambig key.
-            //
-            // AND
-            //
-            //  4c. Add names in items to be inserted to names reg
-            //      (implicit in getAmbiguousCite).
-            //
-            akey = CSL.getAmbiguousCite.call(this.state, Item);
-            this.ambigsTouched[akey] = true;
-            //
-            //  4d. Record ambig pool key on akey list (used for updating further
-            //      down the chain).
-            //
-            if (!Item.legislation_id) {
-                this.akeys[akey] = true;
-            }
-            //
-            //  4e. Create registry token.
-            //
-            newitem = {
-                "id": "" + item,
-                "seq": 0,
-                "offset": 0,
-                "sortkeys": false,
-                "ambig": false,
-                "rendered": false,
-                "disambig": false,
-                "ref": Item,
-                "newItem": true
-            };
-            //
-            //
-            //  4f. Add item ID to hash.
-            //
-            this.registry[item] = newitem;
-            //
-            //  4f(a). Add first reference note number
-            //         (this may be redundant)
-            if (this.citationreg.citationsByItemId && this.citationreg.citationsByItemId[item]) {
-                this.registry[item]["first-reference-note-number"] = this.citationreg.citationsByItemId[item][0].properties.noteIndex;
-            }
-
-            //
-            //  4g. Set and record the base token to hold disambiguation
-            //      results ("disambig" in the object above).
-            //
-            abase = CSL.getAmbigConfig.call(this.state);
-            this.registerAmbigToken(akey, item, abase);
-
-            //if (!this.ambigcites[akey]){
-            //    this.ambigcites[akey] = [];
-            //}
-            //CSL.debug("Run: "+item+"("+this.ambigcites[akey]+")");
-            //if (this.ambigcites[akey].indexOf(item) === -1){
-            //    CSL.debug("  Add: "+item);
-            //    this.ambigcites[akey].push(item);
-            //}
-            //
-            //  4h. Make a note that this item needs its sort keys refreshed.
-            //
-            this.touched[item] = true;
-            // For processCitationCluster()
-            this.return_data.bibchange = true;
-        }
-    }
-    // Disabled.  See formats.js for code.
-    // this.state.fun.decorate.items_add( this.state.output[this.state.opt.mode].tmp, mylist );
-};
-
-/*
-// No longer required.
-CSL.Registry.prototype.douncited = function () {
-    var pos, len;
-    var cited_len = this.mylist.length - this.uncited.length;
-    for (let pos = 0, len = cited_len; pos < len; pos += 1) {
-        this.registry[this.mylist[pos]].uncited = false;
-    }
-    for (let pos = cited_len, len = this.mylist.length; pos < len; pos += 1) {
-        this.registry[this.mylist[pos]].uncited = true;
-    }
-};
-*/
-
-CSL.Registry.prototype.rebuildlist = function (nosort) {
-    let len, pos, item, Item;
-    //
-    //  5. Create "new" list of hash pointers, in the order given in the argument
-    //     to the update function.
-    //
-    //
-    // XXX Keep reflist in place.
-    //
-    if (!nosort) {
-        this.reflist_inserts = [];
-        //
-        //  6. Apply citation numbers to new list,
-        //     saving off old sequence numbers as we go.
-        //
-        // XXX Just memo inserts -- actual insert happens below, at last "sort"
-        //
-        len = this.mylist.length;
-        for (let pos = 0; pos < len; pos += 1) {
-            item = this.mylist[pos];
-            Item = this.registry[item];
-            if (Item.newItem) {
-                this.reflist_inserts.push(Item);
-            }
-            this.oldseq[item] = this.registry[item].seq;
-            this.registry[item].seq = (pos + 1);
-        }
-    } else {
-        this.reflist = [];
-        len = this.mylist.length;
-        for (let pos = 0; pos < len; pos += 1) {
-            item = this.mylist[pos];
-            Item = this.registry[item];
-            this.reflist.push(Item);
-            this.oldseq[item] = this.registry[item].seq;
-            this.registry[item].seq = (pos + 1);
-        }
-    }
-};
-
-/*
- * Okay, at this point we should have a numbered list
- * of registry tokens in the notional order requested,
- * with sequence numbers to reconstruct the ordering
- * if the list is remangled.  So far so good.
- */
-
-CSL.Registry.prototype.dorefreshes = function () {
-    let key, regtoken, Item, akey, abase;
-    //
-    //  7. Refresh items requiring update.
-    //
-    // It looks like we need to do four things on each cite for refresh:
-    // (1) Generate the akey for the cite.
-    // (2) Register it on the ambig token.
-    // (3) Register the akey in this.akeys
-    // (4) Register the item ID in this.touched
-    //
-    for (let key in this.refreshes) {
-        regtoken = this.registry[key];
-        if (!regtoken) {
-            continue;
-        }
-        regtoken.sortkeys = undefined;
-        Item = this.state.refetchItem(key);
-        akey = regtoken.ambig;
-
-        if ("undefined" === typeof akey) {
-            this.state.tmp.disambig_settings = false;
-            akey = CSL.getAmbiguousCite.call(this.state, Item);
-            abase = CSL.getAmbigConfig.call(this.state);
-            this.registerAmbigToken(akey, key, abase);
-        }
-        for (let akkey in this.ambigresets) {
-            if (this.ambigresets[akkey] === 1) {
-                const loneKey = this.ambigcites[akey][0];
-                Item = this.state.refetchItem(loneKey);
-                this.registry[loneKey].disambig = new CSL.AmbigConfig();
-                this.state.tmp.disambig_settings = false;
-                akey = CSL.getAmbiguousCite.call(this.state, Item);
-                abase = CSL.getAmbigConfig.call(this.state);
-                this.registerAmbigToken(akey, loneKey, abase);
-            }
-        }
-        this.state.tmp.taintedItemIDs[key] = true;
-        this.ambigsTouched[akey] = true;
-        if (!Item.legislation_id) {
-            this.akeys[akey] = true;
-        }
-        this.touched[key] = true;
-    }
-};
-
-/*
- * Main disambiguation  += -1 can everything for disambiguation be
- * crunched into this function?
- */
-CSL.Registry.prototype.setdisambigs = function () {
-    //
-    // Okay, more changes.  Here is where we resolve all disambiguation
-    // issues for cites touched by the update.  The this.ambigcites set is
-    // based on the complete short form of citations, and is the basis on
-    // which names are added and minimal adding of initials or given names
-    // is performed.
-    //
-
-    //
-    //  8.  Set disambiguation parameters on each inserted item token.
-    //
-    for (let akey in this.ambigsTouched) {
-        //
-        // Disambiguation is fully encapsulated.
-        // Disambiguator will run only if there are multiple
-        // items, and at least one disambiguation mode is
-        // in effect.
-        this.state.disambiguate.run(akey);
-    }
-    this.ambigsTouched = {};
-    this.akeys = {};
-};
-
-
-
-CSL.Registry.prototype.renumber = function () {
-    let len, pos, item;
-    //
-    // 19. Reset citation numbers on list items
-    //
-    if (this.state.bibliography_sort.opt.citation_number_sort_direction === CSL.DESCENDING) {
-        this.state.bibliography_sort.tmp.citation_number_map = {};
-    }
-    len = this.reflist.length;
-    for (let pos = 0; pos < len; pos += 1) {
-        item = this.reflist[pos];
-        // save the overhead of rerenderings if citation-number is not
-        // used in the style.
-        item.seq = (pos + 1);
-        if (this.state.bibliography_sort.opt.citation_number_sort_direction === CSL.DESCENDING) {
-            this.state.bibliography_sort.tmp.citation_number_map[item.seq] = (this.reflist.length - item.seq + 1);
-        }
-        // update_mode is set to CSL.NUMERIC if citation-number is rendered
-        // in citations.
-        if (this.state.opt.update_mode === CSL.NUMERIC && item.seq != this.oldseq[item.id]) {
-            this.state.tmp.taintedItemIDs[item.id] = true;
-        }
-        if (item.seq != this.oldseq[item.id]) {
-            this.return_data.bibchange = true;
-        }
-    }
-};
-
-CSL.Registry.prototype.setsortkeys = function () {
-    let key;
-    //
-    // 17. Set sort keys on each item token.
-    //
-    for (let i = 0, ilen = this.mylist.length; i < ilen; i += 1) {
-        let key = this.mylist[i];
-        // The last of these conditions may create some thrashing on styles that do not require sorting.
-        if (this.touched[key] || this.state.tmp.taintedItemIDs[key] || !this.registry[key].sortkeys) {
-            this.registry[key].sortkeys = CSL.getSortKeys.call(this.state, this.state.retrieveItem(key), "bibliography_sort");
-        }
-    }
-};
-
-CSL.Registry.prototype._insertItem = function(element, array) {
-    array.splice(this._locationOf(element, array) + 1, 0, element);
-    return array;
-};
-
-CSL.Registry.prototype._locationOf = function(element, array, start, end) {
-    if (array.length === 0) {
-        return -1;
-    }
-    start = start || 0;
-    end = end || array.length;
-    const pivot = (start + end) >> 1;  // should be faster than dividing by 2
-    
-    const c = this.sorter.compareKeys(element, array[pivot]);
-    if (end - start <= 1) {
-        return c == -1 ? pivot - 1 : pivot;
-    }
-    switch (c) {
-        case -1: return this._locationOf(element, array, start, pivot);
-        case 0: return pivot;
-        case 1: return this._locationOf(element, array, pivot, end);
-    }
-};
-
-CSL.Registry.prototype.sorttokens = function (nosort) {
-    let len, item, Item, pos;
-    //
-    // 18. Resort token list.
-    //
-    if (!nosort) {
-        this.reflist_inserts = [];
-        len = this.mylist.length;
-        for (let pos = 0; pos < len; pos += 1) {
-            item = this.mylist[pos];
-            Item = this.registry[item];
-            if (Item.newItem) {
-                this.reflist_inserts.push(Item);
-            }
-        }
-        // There is a thin possibility that tainted items in a sorted list
-        // will change position due to disambiguation. We cover for that here.
-        for (let key in this.state.tmp.taintedItemIDs) {
-            if (this.registry[key] && !this.registry[key].newItem) {
-                // Move tainted items from reflist to reflist_inserts
+                //
+                // 3d-1. Remove item from reflist
                 for (let i=this.reflist.length-1;i>-1;i--) {
                     if (this.reflist[i].id === key) {
-                        this.reflist_inserts.push(this.reflist[i]);
                         this.reflist = this.reflist.slice(0, i).concat(this.reflist.slice(i+1));
                     }
                 }
+                //
+                //  3d. Delete all items in deletion list from hash.
+                //
+                delete this.registry[key];
+                delete this.refhash[key];
+
+                // For processCitationCluster()
+                this.return_data.bibchange = true;
             }
         }
-        for (let i=0,ilen=this.reflist_inserts.length;i<ilen;i++) {
-            let Item = this.reflist_inserts[i];
-            delete Item.newItem;
-            this.reflist = this._insertItem(Item, this.reflist);
+        // Disabled.  See formats.js for code.
+        // this.state.fun.decorate.items_delete( this.state.output[this.state.opt.mode].tmp, myhash );
+    }
+
+    doinserts(mylist: any) {
+        let item, Item, akey, newitem, abase, i, ilen;
+        if ("string" === typeof mylist) {
+            mylist = [mylist];
         }
-        for (let pos = 0; pos < len; pos += 1) {
-            item = this.mylist[pos];
-            Item = this.registry[item];
-            this.registry[item].seq = (pos + 1);
+        //
+        //  4. Insert loop.
+        //
+        for (let i = 0, ilen = mylist.length; i < ilen; i += 1) {
+            item = mylist[i];
+            if (!this.registry[item]) {
+                //
+                //  4a. Retrieve entries for items to insert.
+                //
+                Item = this.state.retrieveItem(item);
+
+                //
+                //  4b. Generate ambig key.
+                //
+                // AND
+                //
+                //  4c. Add names in items to be inserted to names reg
+                //      (implicit in getAmbiguousCite).
+                //
+                akey = CSL.getAmbiguousCite.call(this.state, Item);
+                this.ambigsTouched[akey] = true;
+                //
+                //  4d. Record ambig pool key on akey list (used for updating further
+                //      down the chain).
+                //
+                if (!Item.legislation_id) {
+                    this.akeys[akey] = true;
+                }
+                //
+                //  4e. Create registry token.
+                //
+                newitem = {
+                    "id": "" + item,
+                    "seq": 0,
+                    "offset": 0,
+                    "sortkeys": false,
+                    "ambig": false,
+                    "rendered": false,
+                    "disambig": false,
+                    "ref": Item,
+                    "newItem": true
+                };
+                //
+                //
+                //  4f. Add item ID to hash.
+                //
+                this.registry[item] = newitem;
+                //
+                //  4f(a). Add first reference note number
+                //         (this may be redundant)
+                if (this.citationreg.citationsByItemId && this.citationreg.citationsByItemId[item]) {
+                    this.registry[item]["first-reference-note-number"] = this.citationreg.citationsByItemId[item][0].properties.noteIndex;
+                }
+
+                //
+                //  4g. Set and record the base token to hold disambiguation
+                //      results ("disambig" in the object above).
+                //
+                abase = CSL.getAmbigConfig.call(this.state);
+                this.registerAmbigToken(akey, item, abase);
+
+                //if (!this.ambigcites[akey]){
+                //    this.ambigcites[akey] = [];
+                //}
+                //CSL.debug("Run: "+item+"("+this.ambigcites[akey]+")");
+                //if (this.ambigcites[akey].indexOf(item) === -1){
+                //    CSL.debug("  Add: "+item);
+                //    this.ambigcites[akey].push(item);
+                //}
+                //
+                //  4h. Make a note that this item needs its sort keys refreshed.
+                //
+                this.touched[item] = true;
+                // For processCitationCluster()
+                this.return_data.bibchange = true;
+            }
+        }
+        // Disabled.  See formats.js for code.
+        // this.state.fun.decorate.items_add( this.state.output[this.state.opt.mode].tmp, mylist );
+    }
+
+    /*
+    // No longer required.
+    douncited = function () {
+        var pos, len;
+        var cited_len = this.mylist.length - this.uncited.length;
+        for (let pos = 0, len = cited_len; pos < len; pos += 1) {
+            this.registry[this.mylist[pos]].uncited = false;
+        }
+        for (let pos = cited_len, len = this.mylist.length; pos < len; pos += 1) {
+            this.registry[this.mylist[pos]].uncited = true;
+        }
+    };
+    */
+
+    rebuildlist(nosort: any) {
+        let len, pos, item, Item;
+        //
+        //  5. Create "new" list of hash pointers, in the order given in the argument
+        //     to the update function.
+        //
+        //
+        // XXX Keep reflist in place.
+        //
+        if (!nosort) {
+            this.reflist_inserts = [];
+            //
+            //  6. Apply citation numbers to new list,
+            //     saving off old sequence numbers as we go.
+            //
+            // XXX Just memo inserts -- actual insert happens below, at last "sort"
+            //
+            len = this.mylist.length;
+            for (let pos = 0; pos < len; pos += 1) {
+                item = this.mylist[pos];
+                Item = this.registry[item];
+                if (Item.newItem) {
+                    this.reflist_inserts.push(Item);
+                }
+                this.oldseq[item] = this.registry[item].seq;
+                this.registry[item].seq = (pos + 1);
+            }
+        } else {
+            this.reflist = [];
+            len = this.mylist.length;
+            for (let pos = 0; pos < len; pos += 1) {
+                item = this.mylist[pos];
+                Item = this.registry[item];
+                this.reflist.push(Item);
+                this.oldseq[item] = this.registry[item].seq;
+                this.registry[item].seq = (pos + 1);
+            }
         }
     }
-};
 
-/**
- * Compare two sort keys
- * <p>Nested, because keys are an array.</p>
- */
-CSL.Registry.Comparifier = function (state, keyset) {
-    let sort_directions, len, pos, compareKeys;
-    const sortCompare = CSL.getSortCompare.call(state, state.opt["default-locale-sort"]);
-    sort_directions = state[keyset].opt.sort_directions;
-    this.compareKeys = function (a, b) {
-        len = a.sortkeys ? a.sortkeys.length : 0;
-        for (let pos = 0; pos < len; pos += 1) {
-            //
-            // for ascending sort 1 uses 1, -1 uses -1.
-            // For descending sort, the values are reversed.
-            //
-            // Need to handle undefined values.  No way around it.
-            // So have to screen .localeCompare (which is also
-            // needed) from undefined values.  Everywhere, in all
-            // compares.
-            //
-            let cmp = 0;
-            if (a.sortkeys[pos] === b.sortkeys[pos]) {
-                cmp = 0;
-            } else if ("undefined" === typeof a.sortkeys[pos]) {
-                cmp = sort_directions[pos][1];
-            } else if ("undefined" === typeof b.sortkeys[pos]) {
-                cmp = sort_directions[pos][0];
-            } else {
-                // cmp = a.sortkeys[pos].localeCompare(b.sortkeys[pos]);
-                cmp = sortCompare(a.sortkeys[pos], b.sortkeys[pos]);
+    /*
+     * Okay, at this point we should have a numbered list
+     * of registry tokens in the notional order requested,
+     * with sequence numbers to reconstruct the ordering
+     * if the list is remangled.  So far so good.
+     */
+
+    dorefreshes() {
+        let key, regtoken, Item, akey, abase;
+        //
+        //  7. Refresh items requiring update.
+        //
+        // It looks like we need to do four things on each cite for refresh:
+        // (1) Generate the akey for the cite.
+        // (2) Register it on the ambig token.
+        // (3) Register the akey in this.akeys
+        // (4) Register the item ID in this.touched
+        //
+        for (let key in this.refreshes) {
+            regtoken = this.registry[key];
+            if (!regtoken) {
+                continue;
             }
-            if (0 < cmp) {
-                return sort_directions[pos][1];
-            } else if (0 > cmp) {
-                return sort_directions[pos][0];
+            regtoken.sortkeys = undefined;
+            Item = this.state.refetchItem(key);
+            akey = regtoken.ambig;
+
+            if ("undefined" === typeof akey) {
+                this.state.tmp.disambig_settings = false;
+                akey = CSL.getAmbiguousCite.call(this.state, Item);
+                abase = CSL.getAmbigConfig.call(this.state);
+                this.registerAmbigToken(akey, key, abase);
+            }
+            for (let akkey in this.ambigresets) {
+                if (this.ambigresets[akkey] === 1) {
+                    const loneKey = this.ambigcites[akey][0];
+                    Item = this.state.refetchItem(loneKey);
+                    this.registry[loneKey].disambig = new CSL.AmbigConfig();
+                    this.state.tmp.disambig_settings = false;
+                    akey = CSL.getAmbiguousCite.call(this.state, Item);
+                    abase = CSL.getAmbigConfig.call(this.state);
+                    this.registerAmbigToken(akey, loneKey, abase);
+                }
+            }
+            this.state.tmp.taintedItemIDs[key] = true;
+            this.ambigsTouched[akey] = true;
+            if (!Item.legislation_id) {
+                this.akeys[akey] = true;
+            }
+            this.touched[key] = true;
+        }
+    }
+
+    /*
+     * Main disambiguation  += -1 can everything for disambiguation be
+     * crunched into this function?
+     */
+    setdisambigs() {
+        //
+        // Okay, more changes.  Here is where we resolve all disambiguation
+        // issues for cites touched by the update.  The this.ambigcites set is
+        // based on the complete short form of citations, and is the basis on
+        // which names are added and minimal adding of initials or given names
+        // is performed.
+        //
+
+        //
+        //  8.  Set disambiguation parameters on each inserted item token.
+        //
+        for (let akey in this.ambigsTouched) {
+            //
+            // Disambiguation is fully encapsulated.
+            // Disambiguator will run only if there are multiple
+            // items, and at least one disambiguation mode is
+            // in effect.
+            this.state.disambiguate.run(akey);
+        }
+        this.ambigsTouched = {};
+        this.akeys = {};
+    }
+
+    renumber() {
+        let len, pos, item;
+        //
+        // 19. Reset citation numbers on list items
+        //
+        if (this.state.bibliography_sort.opt.citation_number_sort_direction === CSL.DESCENDING) {
+            this.state.bibliography_sort.tmp.citation_number_map = {};
+        }
+        len = this.reflist.length;
+        for (let pos = 0; pos < len; pos += 1) {
+            item = this.reflist[pos];
+            // save the overhead of rerenderings if citation-number is not
+            // used in the style.
+            item.seq = (pos + 1);
+            if (this.state.bibliography_sort.opt.citation_number_sort_direction === CSL.DESCENDING) {
+                this.state.bibliography_sort.tmp.citation_number_map[item.seq] = (this.reflist.length - item.seq + 1);
+            }
+            // update_mode is set to CSL.NUMERIC if citation-number is rendered
+            // in citations.
+            if (this.state.opt.update_mode === CSL.NUMERIC && item.seq != this.oldseq[item.id]) {
+                this.state.tmp.taintedItemIDs[item.id] = true;
+            }
+            if (item.seq != this.oldseq[item.id]) {
+                this.return_data.bibchange = true;
             }
         }
+    }
+
+    setsortkeys() {
+        let key;
+        //
+        // 17. Set sort keys on each item token.
+        //
+        for (let i = 0, ilen = this.mylist.length; i < ilen; i += 1) {
+            let key = this.mylist[i];
+            // The last of these conditions may create some thrashing on styles that do not require sorting.
+            if (this.touched[key] || this.state.tmp.taintedItemIDs[key] || !this.registry[key].sortkeys) {
+                this.registry[key].sortkeys = CSL.getSortKeys.call(this.state, this.state.retrieveItem(key), "bibliography_sort");
+            }
+        }
+    }
+
+    _insertItem(element: any, array: any) {
+        array.splice(this._locationOf(element, array) + 1, 0, element);
+        return array;
+    }
+
+    _locationOf(element: any, array: any, start?: any, end?: any) {
+        if (array.length === 0) {
+            return -1;
+        }
+        start = start || 0;
+        end = end || array.length;
+        const pivot = (start + end) >> 1;  // should be faster than dividing by 2
+
+        const c = this.sorter.compareKeys(element, array[pivot]);
+        if (end - start <= 1) {
+            return c == -1 ? pivot - 1 : pivot;
+        }
+        switch (c) {
+            case -1: return this._locationOf(element, array, start, pivot);
+            case 0: return pivot;
+            case 1: return this._locationOf(element, array, pivot, end);
+        }
+    }
+
+    sorttokens(nosort: any) {
+        let len, item, Item, pos;
+        //
+        // 18. Resort token list.
+        //
+        if (!nosort) {
+            this.reflist_inserts = [];
+            len = this.mylist.length;
+            for (let pos = 0; pos < len; pos += 1) {
+                item = this.mylist[pos];
+                Item = this.registry[item];
+                if (Item.newItem) {
+                    this.reflist_inserts.push(Item);
+                }
+            }
+            // There is a thin possibility that tainted items in a sorted list
+            // will change position due to disambiguation. We cover for that here.
+            for (let key in this.state.tmp.taintedItemIDs) {
+                if (this.registry[key] && !this.registry[key].newItem) {
+                    // Move tainted items from reflist to reflist_inserts
+                    for (let i=this.reflist.length-1;i>-1;i--) {
+                        if (this.reflist[i].id === key) {
+                            this.reflist_inserts.push(this.reflist[i]);
+                            this.reflist = this.reflist.slice(0, i).concat(this.reflist.slice(i+1));
+                        }
+                    }
+                }
+            }
+            for (let i=0,ilen=this.reflist_inserts.length;i<ilen;i++) {
+                let Item = this.reflist_inserts[i];
+                delete Item.newItem;
+                this.reflist = this._insertItem(Item, this.reflist);
+            }
+            for (let pos = 0; pos < len; pos += 1) {
+                item = this.mylist[pos];
+                Item = this.registry[item];
+                this.registry[item].seq = (pos + 1);
+            }
+        }
+    }
+
+    /**
+     * Compare two disambiguation tokens by their registry sort order
+     * <p>Disambiguation lists need to be sorted this way, to
+     * obtain the correct year-suffix when that's used.</p>
+     */
+    compareRegistryTokens(a: any, b: any) {
         if (a.seq > b.seq) {
             return 1;
         } else if (a.seq < b.seq) {
             return -1;
         }
         return 0;
-    };
-    compareKeys = this.compareKeys;
-    this.compareCompositeKeys = function (a, b) {
-        return compareKeys(a[1], b[1]);
-    };
-};
-
-
-/**
- * Compare two disambiguation tokens by their registry sort order
- * <p>Disambiguation lists need to be sorted this way, to
- * obtain the correct year-suffix when that's used.</p>
- */
-CSL.Registry.prototype.compareRegistryTokens = function (a, b) {
-    if (a.seq > b.seq) {
-        return 1;
-    } else if (a.seq < b.seq) {
-        return -1;
     }
-    return 0;
-};
 
-CSL.Registry.prototype.registerAmbigToken = function (akey, id, ambig_config) {
-    //SNIP-START
-    if (!this.registry[id]) {
-        CSL.debug("Warning: unregistered item: itemID=("+id+"), akey=("+akey+")");
-    }
-    //SNIP-END
-    // Taint if number of names to be included has changed
-    if (this.registry[id] && this.registry[id].disambig && this.registry[id].disambig.names) {
-        for (let i = 0, ilen = ambig_config.names.length; i < ilen; i += 1) {
-            const new_names_params = ambig_config.names[i];
-            const old_names_params = this.registry[id].disambig.names[i];
-            if (new_names_params !== old_names_params) {
-                this.state.tmp.taintedItemIDs[id] = true;
-            } else if (ambig_config.givens[i]) {
-                // Compare givenses only if the number of names is aligned.
-                for (let j=0,jlen=ambig_config.givens[i].length;j<jlen;j+=1) {
-                    const new_gnames_params = ambig_config.givens[i][j];
-                    const old_gnames_params = this.registry[id].disambig.givens[i][j];
-                    if (new_gnames_params !== old_gnames_params) {
-                        this.state.tmp.taintedItemIDs[id] = true;
+    registerAmbigToken(akey: any, id: any, ambig_config: any) {
+        //SNIP-START
+        if (!this.registry[id]) {
+            CSL.debug("Warning: unregistered item: itemID=("+id+"), akey=("+akey+")");
+        }
+        //SNIP-END
+        // Taint if number of names to be included has changed
+        if (this.registry[id] && this.registry[id].disambig && this.registry[id].disambig.names) {
+            for (let i = 0, ilen = ambig_config.names.length; i < ilen; i += 1) {
+                const new_names_params = ambig_config.names[i];
+                const old_names_params = this.registry[id].disambig.names[i];
+                if (new_names_params !== old_names_params) {
+                    this.state.tmp.taintedItemIDs[id] = true;
+                } else if (ambig_config.givens[i]) {
+                    // Compare givenses only if the number of names is aligned.
+                    for (let j=0,jlen=ambig_config.givens[i].length;j<jlen;j+=1) {
+                        const new_gnames_params = ambig_config.givens[i][j];
+                        const old_gnames_params = this.registry[id].disambig.givens[i][j];
+                        if (new_gnames_params !== old_gnames_params) {
+                            this.state.tmp.taintedItemIDs[id] = true;
+                        }
                     }
                 }
             }
         }
-    }
 
-    if (!this.ambigcites[akey]) {
-        this.ambigcites[akey] = [];
+        if (!this.ambigcites[akey]) {
+            this.ambigcites[akey] = [];
+        }
+        if (this.ambigcites[akey].indexOf("" + id) === -1) {
+            this.ambigcites[akey].push("" + id);
+        }
+        this.registry[id].ambig = akey;
+        this.registry[id].disambig = CSL.cloneAmbigConfig(ambig_config);
     }
-    if (this.ambigcites[akey].indexOf("" + id) === -1) {
-        this.ambigcites[akey].push("" + id);
+}
+
+/**
+ * Compare two sort keys
+ * <p>Nested, because keys are an array.</p>
+ */
+export class Comparifier {
+    compareKeys: any;
+    compareCompositeKeys: any;
+
+    constructor(state: any, keyset: any) {
+        let sort_directions: any, len: any, pos: any, compareKeys: any;
+        const sortCompare = CSL.getSortCompare.call(state, state.opt["default-locale-sort"]);
+        sort_directions = state[keyset].opt.sort_directions;
+        this.compareKeys = function (a: any, b: any) {
+            len = a.sortkeys ? a.sortkeys.length : 0;
+            for (let pos = 0; pos < len; pos += 1) {
+                //
+                // for ascending sort 1 uses 1, -1 uses -1.
+                // For descending sort, the values are reversed.
+                //
+                // Need to handle undefined values.  No way around it.
+                // So have to screen .localeCompare (which is also
+                // needed) from undefined values.  Everywhere, in all
+                // compares.
+                //
+                let cmp = 0;
+                if (a.sortkeys[pos] === b.sortkeys[pos]) {
+                    cmp = 0;
+                } else if ("undefined" === typeof a.sortkeys[pos]) {
+                    cmp = sort_directions[pos][1];
+                } else if ("undefined" === typeof b.sortkeys[pos]) {
+                    cmp = sort_directions[pos][0];
+                } else {
+                    // cmp = a.sortkeys[pos].localeCompare(b.sortkeys[pos]);
+                    cmp = sortCompare(a.sortkeys[pos], b.sortkeys[pos]);
+                }
+                if (0 < cmp) {
+                    return sort_directions[pos][1];
+                } else if (0 > cmp) {
+                    return sort_directions[pos][0];
+                }
+            }
+            if (a.seq > b.seq) {
+                return 1;
+            } else if (a.seq < b.seq) {
+                return -1;
+            }
+            return 0;
+        };
+        compareKeys = this.compareKeys;
+        this.compareCompositeKeys = function (a: any, b: any) {
+            return compareKeys(a[1], b[1]);
+        };
     }
-    this.registry[id].ambig = akey;
-    this.registry[id].disambig = CSL.cloneAmbigConfig(ambig_config);
-};
+}
 
 
 /**
  * Get the sort key of an item, without decorations
  * <p>This is used internally by the Registry.</p>
  */
-CSL.getSortKeys = function (Item, key_type) {
+CSL.getSortKeys = function (Item: any, key_type: any) {
     let area, root, extension, strip_prepositions, len, pos;
     //SNIP-START
     if (false) {
@@ -811,4 +842,3 @@ CSL.getSortKeys = function (Item, key_type) {
     this.tmp.extension = extension;
     return this[key_type].keys;
 };
-

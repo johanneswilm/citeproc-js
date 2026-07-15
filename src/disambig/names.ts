@@ -1,7 +1,7 @@
 import { CSL } from '../csl';
 /*global CSL: true */
 
-CSL.Registry.NameReg = function (state) {
+export function NameReg(state) {
     let pkey, ikey, skey;
     this.state = state;
     this.namereg = {};
