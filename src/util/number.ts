@@ -1,7 +1,7 @@
 import { CSL } from '../csl';
 /*global CSL: true */
 
-CSL.Util.padding = function (num) {
+export function padding(num: any): string {
     let m = num.match(/\s*(-{0,1}[0-9]+)/);
     if (m) {
         num = parseInt(m[1], 10);
@@ -892,7 +892,7 @@ export function processNumber(node, ItemObject, variable) {
     }
 };
 
-CSL.Util.outputNumericField = function(state, varname, itemID) {
+export function outputNumericField(state: any, varname: string, itemID: string): void {
 
     state.output.openLevel(state.tmp.shadow_numbers[varname].masterStyling);
     const masterStyling = state.tmp.shadow_numbers[varname].masterStyling;
