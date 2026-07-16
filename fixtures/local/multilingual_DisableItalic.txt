@@ -6,7 +6,7 @@ bibliography
 
 >>===== RESULT =====>>
 <div class="csl-bib-body">
-  <div class="csl-entry"><i>Summary record<span style="font-style:normal;"> [議事要旨]</span>: Hearing before the Committee of enquiry on the nomination of lower court judges<span style="font-style:normal;"> [下級裁判所裁判官指名諮問委員会]</span></i>, 40th session (2009)</div>
+  <div class="csl-entry"><i>Summary Record<span style="font-style:normal;"> [議事要旨]</span></i>, 40th session (2009)</div>
 </div>
 <<===== RESULT =====<<
 

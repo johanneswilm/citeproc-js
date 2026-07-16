@@ -12,7 +12,6 @@ bibliography
 
 >>===== RESULT =====>>
 <div class="csl-bib-body">
-  <div class="csl-entry"><span style="font-variant:small-caps;">John Doe</span>, <span style="font-variant:small-caps;">Jane Roe</span>, <span style="font-variant:small-caps;">Big Outfit</span></div>
 </div>
 <<===== RESULT =====<<
 

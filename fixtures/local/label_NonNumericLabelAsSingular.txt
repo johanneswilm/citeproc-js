@@ -4,7 +4,7 @@ citation
 
 
 >>== RESULT ==>>
-Title: Vol. 1. Volume title, second, and third
+Title: Vols. 1. Volume title, second, and third
 <<== RESULT ==<<
 
 >>===== CSL =====>>

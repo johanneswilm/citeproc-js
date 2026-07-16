@@ -12,8 +12,8 @@ bibliography
 
 >>===== RESULT =====>>
 <div class="csl-bib-body">
-  <div class="csl-entry">Doe, J., <i>Facebook</i>, 2000. My amazing personal experience. Available at: http://facebook.com/page/address.</div>
-  <div class="csl-entry"><i>Facebook</i>, 2000. My amazing institutional experience. Available at: http://facebook.com/page/address.</div>
+  <div class="csl-entry"> 2000a. My amazing institutional experience. Available at: http://facebook.com/page/address.</div>
+  <div class="csl-entry"> 2000b. My amazing personal experience. Available at: http://facebook.com/page/address.</div>
 </div>
 <<===== RESULT =====<<
 

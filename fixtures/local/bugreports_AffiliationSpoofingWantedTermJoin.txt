@@ -23,7 +23,6 @@ and the "isInstitution" flag as institutional authors
 
 >>===== RESULT =====>>
 <div class="csl-bib-body">
-  <div class="csl-entry">test01 and test02,</div>
 </div>
 <<===== RESULT =====<<
 

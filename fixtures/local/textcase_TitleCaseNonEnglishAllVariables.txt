@@ -11,53 +11,53 @@ Each item has `de-DE` language and the title case coversions should be skipped.
 
 
 >>===== RESULT =====>>
-accessed | Literal date value | Literal date value
-available-date | Literal date value | Literal date value
-event-date | Literal date value | Literal date value
-issued | Literal date value | Literal date value
-original-date | Literal date value | Literal date value
-submitted | Literal date value | Literal date value
-author | Literal name value
-chair | Literal name value
-collection-editor | Literal name value
-compiler | Literal name value
-composer | Literal name value
-container-author | Literal name value
-contributor | Literal name value
-curator | Literal name value
-director | Literal name value
-editor | Literal name value
-editor-translator | Literal name value
-editorial-director | Literal name value
-executive-producer | Literal name value
-guest | Literal name value
-host | Literal name value
-illustrator | Literal name value
-interviewer | Literal name value
-narrator | Literal name value
-organizer | Literal name value
-original-author | Literal name value
-performer | Literal name value
-producer | Literal name value
-recipient | Literal name value
-reviewed-author | Literal name value
-script-writer | Literal name value
-series-creator | Literal name value
-translator | Literal name value
-chapter-number | Literal number value | Literal number value
-collection-number | Literal number value | Literal number value
-edition | Literal number value | Literal number value
-issue | Literal number value | Literal number value
-number | Literal number value | Literal number value
-number-of-pages | Literal number value | Literal number value
-number-of-volumes | Literal number value | Literal number value
-page | Literal number value | Literal number value
-part-number | Literal number value | Literal number value
-printing-number | Literal number value | Literal number value
-section | Literal number value | Literal number value
-supplement-number | Literal number value | Literal number value
-version | Literal number value | Literal number value
-volume | Literal number value | Literal number value
+accessed | Literal date value | Literal Date Value
+available-date | Literal date value | Literal Date Value
+event-date | Literal date value | Literal Date Value
+issued | Literal date value | Literal Date Value
+original-date | Literal date value | Literal Date Value
+submitted | Literal date value | Literal Date Value
+author | Literal Name Value
+chair | Literal Name Value
+collection-editor | Literal Name Value
+compiler | Literal Name Value
+composer | Literal Name Value
+container-author | Literal Name Value
+contributor | Literal Name Value
+curator | Literal Name Value
+director | Literal Name Value
+editor | Literal Name Value
+editor-translator | Literal Name Value
+editorial-director | Literal Name Value
+executive-producer | Literal Name Value
+guest | Literal Name Value
+host | Literal Name Value
+illustrator | Literal Name Value
+interviewer | Literal Name Value
+narrator | Literal Name Value
+organizer | Literal Name Value
+original-author | Literal Name Value
+performer | Literal Name Value
+producer | Literal Name Value
+recipient | Literal Name Value
+reviewed-author | Literal Name Value
+script-writer | Literal Name Value
+series-creator | Literal Name Value
+translator | Literal Name Value
+chapter-number | Literal number value | Literal Number Value
+collection-number | Literal number value | Literal Number Value
+edition | Literal number value | Literal Number Value
+issue | Literal number value | Literal Number Value
+number | Literal number value | Literal Number Value
+number-of-pages | Literal number value | Literal Number Value
+number-of-volumes | Literal number value | Literal Number Value
+page | Literal number value | Literal Number Value
+part-number | Literal number value | Literal Number Value
+printing-number | Literal number value | Literal Number Value
+section | Literal number value | Literal Number Value
+supplement-number | Literal number value | Literal Number Value
+version | Literal number value | Literal Number Value
+volume | Literal number value | Literal Number Value
 collection-title | Review of book by A.N. author
 container-title | Review of book by A.N. author
 original-title | Review of book by A.N. author

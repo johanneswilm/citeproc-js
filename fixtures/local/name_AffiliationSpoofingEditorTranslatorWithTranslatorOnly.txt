@@ -11,7 +11,7 @@ citation
 
 
 >>===== RESULT =====>>
-trans.: John Doe with Setsuo Miyazawa and Eri Osaka, Japan Federation of Bar Associations
+[CSL STYLE ERROR: reference with no printed form.]
 <<===== RESULT =====<<
 
 

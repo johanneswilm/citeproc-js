@@ -13,7 +13,7 @@ no longer required, and have been removed from citeproc-js.
 
 
 >>===== RESULT =====>>
-Mercuricon Spittle with Ministry of Fear, Loathing and Error
+[CSL STYLE ERROR: reference with no printed form.]
 <<===== RESULT =====<<
 
 

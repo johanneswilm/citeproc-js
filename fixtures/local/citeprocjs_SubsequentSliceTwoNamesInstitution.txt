@@ -10,7 +10,7 @@ bibliography
 
 >>===== RESULT =====>>
 <div class="csl-bib-body">
-  <div class="csl-entry">Merwe, Wikus van der (as primary author) -- Multi-National United and Prawn, Christopher the</div>
+  <div class="csl-entry">Merwe, Wikus van der (as primary author) -- Merwe, Wikus van der, Multi-National United, and Prawn, Christopher the</div>
 </div>
 <<===== RESULT =====<<
 

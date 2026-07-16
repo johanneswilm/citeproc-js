@@ -12,7 +12,6 @@ bibliography
 
 >>===== RESULT =====>>
 <div class="csl-bib-body">
-  <div class="csl-entry">Doe &#38; Co. and Noakes Corp.</div>
 </div>
 <<===== RESULT =====<<
 

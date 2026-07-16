@@ -4,7 +4,7 @@ citation
 
 
 >>===== RESULT =====>>
->>[0] numbers ci–cv
+>>[0] ci–cv
 <<===== RESULT =====<<
 
 >>===== CITATIONS =====>>

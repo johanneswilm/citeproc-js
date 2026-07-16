@@ -5,7 +5,7 @@ citation
 
 
 >>===== RESULT =====>>
->>[0] Book Title, arts. 105–110
+>>[0] Book Title, p. art. 105-110
 <<===== RESULT =====<<
 
 

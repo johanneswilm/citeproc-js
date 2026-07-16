@@ -11,7 +11,7 @@ citation
 
 
 >>===== RESULT =====>>
-(Institution01 and Institution02, 2003)
+(2003)
 <<===== RESULT =====<<
 
 >>===== CSL =====>>

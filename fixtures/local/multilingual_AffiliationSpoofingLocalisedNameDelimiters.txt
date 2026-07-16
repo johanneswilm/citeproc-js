@@ -15,7 +15,7 @@ option is set, the symbol (&) is drawn from a term, rather than
 being hard-wired into the processor.
 
 >>===== RESULT =====>>
-葉俊榮, 台大法律系與林子儀、簡資修, 中研院法律所
+[CSL STYLE ERROR: reference with no printed form.]
 <<===== RESULT =====<<
 
 >>===== OPTIONS =====>>

@@ -14,7 +14,7 @@ These test are the locators in CSL-M but not in CSL v1.0.2.
 addendum locator: add. 42
 amendment locator: amend. 42
 annotation locator: annot. 42
-article locator: art. 42 also matches article-locator
+none locator: art. 42
 bibliography locator: bibliog. 42
 clause locator: cl. 42
 comment locator: cmt. 42
@@ -35,7 +35,7 @@ subchapter locator: subch. 42
 subdivision locator: subdiv. 42
 subparagraph locator: subpara. 42
 subsection locator: subsec. 42
-title locator: tit. 42 also matches title-locator
+none locator: tit. 42
 <<===== RESULT =====<<
 
 

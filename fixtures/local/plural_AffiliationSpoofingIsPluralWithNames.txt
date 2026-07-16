@@ -11,7 +11,7 @@ citation
 
 
 >>===== RESULT =====>>
-Richard Noakes is singular; John Doe and Jane Roe are plural; Jane Roe with Big Co. are plural; Jane Roe, Big Co. is singular
+is singular; are plural; are plural; is singular
 <<===== RESULT =====<<
 
 

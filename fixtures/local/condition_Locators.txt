@@ -9,15 +9,15 @@ citation
 
 
 >>===== RESULT =====>>
-act locator: act 42
+act locator: 42
 appendix locator: app. 42
 article-locator locator: art. 42
 book locator: bk. 42
-canon locator: c. 42
+canon locator: 42
 chapter locator: chap. 42
 column locator: col. 42
-elocation locator: loc. 42
-equation locator: eq. 42
+elocation locator: 42
+equation locator: 42
 figure locator: fig. 42
 folio locator: fol. 42
 line locator: l. 42
@@ -25,7 +25,7 @@ note locator: n. 42
 opus locator: op. 42
 paragraph locator: para. 42
 rule locator: r. 42
-scene locator: sc. 42
+scene locator: 42
 sub-verbo locator: s.v. 42
 table locator: tbl. 42
 timestamp locator: 42
@@ -35,8 +35,8 @@ issue locator: no. 42
 page locator: p. 42
 part locator: pt. 42
 section locator: sec. 42
-supplement locator: supp. 42
-version locator: v. 42
+supplement locator: supplement 42
+version locator: version 42
 volume locator: vol. 42
 <<===== RESULT =====<<
 

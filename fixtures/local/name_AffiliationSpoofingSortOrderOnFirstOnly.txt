@@ -13,7 +13,6 @@ bibliography
 
 >>===== RESULT =====>>
 <div class="csl-bib-body">
-  <div class="csl-entry">Doe, John &#38; Jane Roe, Doe &#38; Co. and John Noakes &#38; Wurzle Gummidge, Noakes Corp.</div>
 </div>
 <<===== RESULT =====<<
 

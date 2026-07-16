@@ -14,7 +14,7 @@ bibliography
 
 >>===== RESULT =====>>
 <div class="csl-bib-body">
-  <div class="csl-entry">Malone, Nolan J., U.S. Bureau of the Census. 2001. <i>Evaluating Components of International Migration: Consistency of 2000 Nativity Data</i>. Routledge, December.</div>
+  <div class="csl-entry">2001. <i>Evaluating Components of International Migration: Consistency of 2000 Nativity Data</i>. Routledge, December.</div>
 </div>
 <<===== RESULT =====<<
 

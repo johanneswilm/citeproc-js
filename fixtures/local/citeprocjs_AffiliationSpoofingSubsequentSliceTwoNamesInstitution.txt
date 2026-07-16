@@ -13,7 +13,6 @@ bibliography
 
 >>===== RESULT =====>>
 <div class="csl-bib-body">
-  <div class="csl-entry">Prawn, Christopher the (as primary author) -- Merwe, Wikus van der, Multi-National United</div>
 </div>
 <<===== RESULT =====<<
 

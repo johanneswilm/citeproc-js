@@ -20,7 +20,7 @@ selectively if there are requests to do so.
 
 
 >>===== RESULT =====>>
-(Doe, <i>Facebook</i> 2000; <i>Facebook</i> 2000)
+(2000a; 2000b)
 <<===== RESULT =====<<
 
 

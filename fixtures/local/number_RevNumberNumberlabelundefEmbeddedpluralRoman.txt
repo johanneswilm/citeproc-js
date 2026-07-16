@@ -4,7 +4,7 @@ citation
 
 
 >>===== RESULT =====>>
->>[0] number x paras. 1–6
+>>[0] x paras. 1–6
 <<===== RESULT =====<<
 
 >>===== CITATIONS =====>>

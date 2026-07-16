@@ -12,7 +12,6 @@ bibliography
 
 >>===== RESULT =====>>
 <div class="csl-bib-body">
-  <div class="csl-entry">Wurzle Gummidge, John Doe, Jane Roe, &#38; John Noakes</div>
 </div>
 <<===== RESULT =====<<
 

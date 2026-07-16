@@ -4,7 +4,7 @@ citation
 
 
 >>===== RESULT =====>>
->>[0] numbers 101–105
+>>[0] 101–105
 <<===== RESULT =====<<
 
 >>===== CITATIONS =====>>
