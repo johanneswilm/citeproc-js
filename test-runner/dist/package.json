@@ -4,7 +4,6 @@
     "description": "CSL test runner with style support",
     "main": "dist/runtests.js",
     "files": [
-        "jing/jing-20131210.jar",
         "lib/*.ts",
         "lib/templateTXT.txt",
         "dist/runtests.js",

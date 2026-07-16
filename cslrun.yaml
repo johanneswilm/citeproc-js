@@ -8,6 +8,6 @@ path:
     src: src
     abbrevs: /media/storage/src/JM/jurism/juris-abbrevs
     locale: locale
-    modules: /media/storage/src/JM/citeproc-js/juris-modules
+    modules: juris-modules
     cslschema: csl-schemata/csl.rnc
     cslmschema: csl-schemata/csl-mlz.rnc

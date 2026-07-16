@@ -6,7 +6,6 @@ const homeDir = require('os').homedir();
 const scriptDir = path.dirname(require.main.filename);
 const errors = require("./errors");
 const yaml = require("yaml");
-const jingJar = "jing-20131210.jar";
 const cwd = process.cwd();
 const sourceRepoPaths = ["local", "std", "src", "locale", "modules", "cslschema", "cslmschema"];
 const defaultConfig = "path:\n"
@@ -142,7 +141,6 @@ else {
 }
 config.path.cwd = cwd;
 config.path.scriptdir = scriptDir;
-config.path.jing = path.join(scriptDir, "jing", jingJar);
 if (process.env.TRAVIS) {
     config.path.fixturedir = path.join(homeDir, ".cslTestFixtures");
 }
