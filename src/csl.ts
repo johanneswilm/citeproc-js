@@ -22,10 +22,6 @@
  * @namespace A CSL citation formatter.
  */
 
-// IE6 does not implement Array.indexOf().
-// IE7 neither, according to rumour.
-
-
 // Potential skip words:
 // under; along; out; between; among; outside; inside; amid; amidst; against; toward; towards.
 // See https://forums.zotero.org/discussion/30484/?Focus=159613#Comment_159613
@@ -37,19 +33,11 @@ export const CSL: CSLNamespace = {
 
     PROCESSOR_VERSION: "1.4.61",
 
-    error: function(str) { // default error function
-        if ("undefined" === typeof Error) {
-            throw new (Error as any)("citeproc-js error: " + str);
-        } else {
-            throw "citeproc-js error: " + str;
-        }
+    error: function(str: string): void {
+        throw new Error("citeproc-js error: " + str);
     },
-    debug: function(str) { // default debug function
-        if ("undefined" === typeof console) {
-            dump("CSL: " + str + "\n");
-        } else {
-            console.log("citeproc-js warning: " + str);
-        }
+    debug: function(str: string): void {
+        console.log("citeproc-js warning: " + str);
     },
 
     toLocaleUpperCase(str) {

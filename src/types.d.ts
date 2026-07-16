@@ -130,22 +130,6 @@ declare const CSL: CSLNamespace;
  * configured lib (``ES2018``).
  */
 declare const console: { log(...args: any[]): void; [key: string]: any };
-declare function dump(...args: any[]): void;
+declare let DOMParser: any;
 declare const Zotero: any;
 declare const Components: any;
-
-/**
- * Host-runtime globals (Rhino/Narwhal/SpiderMonkey) used by a handful of
- * modules.  They are never present in the bundled browser/CommonJS builds, so
- * they are typed as ``any``.
- */
-declare let DOMParser: any;
-declare const ActiveXObject: any;
-declare const XMLHttpRequest: any;
-declare const marknote: any;
-declare function XML(str: string): any;
-declare function readFile(...args: any[]): any;
-declare function snarf(...args: any[]): any;
-declare function read(...args: any[]): any;
-declare const load: any;
-declare function print(...args: any[]): void;

@@ -18,9 +18,6 @@ export function setupXml(xmlObject: any): any {
         } else if ("undefined" !== typeof xmlObject.getAttribute) {
             // Assume DOM instance
             parser = new CSL.XmlDOM(xmlObject);
-        } else if ("undefined" !== typeof xmlObject.toXMLString) {
-            // Assume E4X object
-            parser = new CSL.XmlE4X(xmlObject);
         } else {
             // Assume JS object
             parser = new CSL.XmlJSON(xmlObject);

@@ -12,31 +12,6 @@ export class XmlDOM {
 
     constructor(dataObj) {
         this.dataObj = dataObj;
-        if ("undefined" == typeof DOMParser) {
-            DOMParser = function() {};
-            DOMParser.prototype.parseFromString = function(str, contentType) {
-                if ("undefined" != typeof ActiveXObject) {
-                    const xmldata = new ActiveXObject('MSXML.DomDocument');
-                    xmldata.async = false;
-                    xmldata.loadXML(str);
-                    return xmldata;
-                } else if ("undefined" != typeof XMLHttpRequest) {
-                    const xmldata = new XMLHttpRequest;
-                    if (!contentType) {
-                        contentType = 'text/xml';
-                    }
-                    xmldata.open('GET', 'data:' + contentType + ';charset=utf-8,' + encodeURIComponent(str), false);
-                    if(xmldata.overrideMimeType) {
-                        xmldata.overrideMimeType(contentType);
-                    }
-                    xmldata.send(null);
-                    return xmldata.responseXML;
-                } else if ("undefined" != typeof marknote) {
-                    const parser = new marknote.Parser();
-                    return parser.parse(str);
-                }
-            };
-        }
         this.parser = new DOMParser();
 
         let str = "<docco><institution institution-parts=\"long\" delimiter=\", \" substitute-use-first=\"1\" use-last=\"1\"><institution-part name=\"long\"/></institution></docco>";
@@ -59,31 +34,7 @@ export class XmlDOM {
     }
 
     importNode(doc, srcElement) {
-        let ret;
-        if ("undefined" == typeof doc.importNode) {
-            ret = this._importNode(doc, srcElement, true);
-        } else {
-            ret = doc.importNode(srcElement, true);
-        }
-        return ret;
-    }
-
-    _importNode(doc, node, allChildren) {
-        switch (node.nodeType) {
-            case 1:
-                const newNode = doc.createElement(node.nodeName);
-                if (node.attributes && node.attributes.length > 0)
-                    for (let i = 0, il = node.attributes.length; i < il;)
-                        newNode.setAttribute(node.attributes[i].nodeName, node.getAttribute(node.attributes[i++].nodeName));
-                    if (allChildren && node.childNodes && node.childNodes.length > 0)
-                        for (let i = 0, il = node.childNodes.length; i < il;)
-                            newNode.appendChild(this._importNode(doc, node.childNodes[i++], allChildren));
-                return newNode;
-                break;
-            case 3:
-            case 4:
-            case 8:
-        }
+        return doc.importNode(srcElement, true);
     }
 
     clean(xml) {
@@ -107,9 +58,6 @@ export class XmlDOM {
         }
         if (node) {
             text = node.textContent;
-        }
-        if (!text) {
-            text = node.innerText;
         }
         if (!text) {
             text = node.innerHTML;
@@ -152,15 +100,7 @@ export class XmlDOM {
     }
 
     content(myxml) {
-        let ret;
-        if ("undefined" != typeof myxml.textContent) {
-            ret = myxml.textContent;
-        } else if ("undefined" != typeof myxml.innerText) {
-            ret = myxml.innerText;
-        } else {
-            ret = myxml.txt;
-        }
-        return ret;
+        return myxml.textContent;
     }
 
     numberofnodes(myxml) {
@@ -192,23 +132,11 @@ export class XmlDOM {
         if (name){
             const vals = myxml.getElementsByTagName(name);
             if (vals.length > 0) {
-                if ("undefined" != typeof vals[0].textContent) {
-                    ret = vals[0].textContent;
-                } else if ("undefined" != typeof vals[0].innerText) {
-                    ret = vals[0].innerText;
-                } else {
-                    ret = vals[0].text;
-                }
+                ret = vals[0].textContent;
             }
         }
         if (ret === null && myxml && myxml.childNodes && (myxml.childNodes.length == 0 || (myxml.childNodes.length == 1 && myxml.firstChild.nodeName == "#text"))) {
-            if ("undefined" != typeof myxml.textContent) {
-                ret = myxml.textContent;
-            } else if ("undefined" != typeof myxml.innerText) {
-                ret = myxml.innerText;
-            } else {
-                ret = myxml.text;
-            }
+            ret = myxml.textContent;
         }
         if (ret === null) {
             ret = myxml;

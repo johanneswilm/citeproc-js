@@ -40,7 +40,7 @@ export function processCitationCluster(this: any, citation: any, citationsPre: a
 
     // Revert citation dereference from 2ffc4664ae
     //citation = JSON.parse(JSON.stringify(citation));
-    
+
     //print("################### processCitationCluster() #################");
     this.tmp.citation_errors = [];
     this.registry.return_data = {"bibchange": false};
@@ -121,7 +121,7 @@ export function processCitationCluster(this: any, citation: any, citationsPre: a
     // Styles that use note backreferencing with a by-cite
     // givenname disambiguation rule include the note number
     // in the cite for disambiguation purposes. Correct resolution
-    // of disambiguate="true" conditions on first-reference cites 
+    // of disambiguate="true" conditions on first-reference cites
     // in certain editing scenarios (e.g. where a cite is moved across
     // notes) requires that disambiguation be rerun on cites
     // affected by the edit.
@@ -300,7 +300,7 @@ export function processCitationCluster(this: any, citation: any, citationsPre: a
             sortedItems[i][1].sortkeys = CSL.getSortKeys.call(this, sortedItems[i][0], "citation_sort");
         }
 
-        /* 
+        /*
          * Grouped sort stuff (start)
          */
 
@@ -312,7 +312,7 @@ export function processCitationCluster(this: any, citation: any, citationsPre: a
                 // Run getAmbiguousCite() with the current disambig
                 // parameters, and pick up authorstring from the registry.
                 const mydisambig = this.registry.registry[sortedItems[i][0].id].disambig;
-                
+
                 this.tmp.authorstring_request = true;
                 CSL.getAmbiguousCite.call(this, sortedItems[i][0], mydisambig);
                 const authorstring = this.registry.authorstrings[sortedItems[i][0].id];
@@ -322,7 +322,7 @@ export function processCitationCluster(this: any, citation: any, citationsPre: a
             }
 
             sortedItems.sort(this.citation.srt.compareCompositeKeys);
-            // Replace authorstring key in items with same (authorstring) with the 
+            // Replace authorstring key in items with same (authorstring) with the
             // keystring of first normal key. This forces grouped sorts,
             // as discussed here:
             // https://github.com/citation-style-language/schema/issues/40
@@ -474,7 +474,7 @@ export function processCitationCluster(this: any, citation: any, citationsPre: a
                     }
                     let oldlastid;
                     let oldlastxloc;
-                    
+
                     // Okay, chill.
                     // The first test needs to be for presence of last_ref[last_id]. Everything
                     // after in subsequent evaluation depends on that.
@@ -485,9 +485,9 @@ export function processCitationCluster(this: any, citation: any, citationsPre: a
 
                     // ALSO, despite starting with this test, we need to set first-reference-note-number
                     // on every item.
-                    
+
                     // So ... we run an independent test on first_ref[first_id]], and let this ride.
-                    
+
                     if ("undefined" === typeof last_ref[last_id] && onecitation.properties.mode !== "author-only") {
                         first_ref[first_id] = onecitation.properties.noteIndex;
                         last_ref[last_id] = onecitation.properties.noteIndex;
@@ -557,7 +557,7 @@ export function processCitationCluster(this: any, citation: any, citationsPre: a
                             //         same item in this onecitation; and
                             ibidme = true;
                         } else if (k === 0 && j > 0 && prevCitation.properties.noteIndex == thisCitation.properties.noteIndex
-                                   && prevCitation.sortedItems.length 
+                                   && prevCitation.sortedItems.length
                                    && oldlastid == first_id && oldlastxloc == myxloc) {
                             // ... in case there are separate citations in the same note ...
                             // Case 2 [take 2]: immediately preceding source in this onecitation
@@ -670,7 +670,7 @@ export function processCitationCluster(this: any, citation: any, citationsPre: a
                     }
                     if (onecitation.properties.noteIndex) {
                         const note_distance = parseInt(onecitation.properties.noteIndex, 10) - parseInt(last_ref[last_id], 10);
-                        if (item[1].position !== CSL.POSITION_FIRST 
+                        if (item[1].position !== CSL.POSITION_FIRST
                             && note_distance <= this.citation.opt["near-note-distance"]) {
                             item[1]["near-note"] = true;
                         }
@@ -878,12 +878,6 @@ export function processCitationCluster(this: any, citation: any, citationsPre: a
         obj.push(this.process_CitationCluster.call(this, sortedItems, citation));
         obj.push(citation.citationID);
         ret.push(obj);
-        //
-        // note for posterity: Rhino and Spidermonkey produce different
-        // sort results for items with matching keys.  That discrepancy
-        // turned up a subtle bug in the parallel detection code, trapped
-        // at line 266, above, and in line 94 of util_parallel.js.
-        //
         ret.sort(function (a, b) {
             if (a[0] > b[0]) {
                 return 1;
@@ -1019,10 +1013,10 @@ CSL.getAmbiguousCite = function (Item, disambig, visualForm, item) {
         itemSupp.label = item.label;
     }
 
-    if (this.registry.registry[Item.id] 
+    if (this.registry.registry[Item.id]
         && this.registry.citationreg.citationsByItemId
         && this.registry.citationreg.citationsByItemId[Item.id]
-        && this.registry.citationreg.citationsByItemId[Item.id].length 
+        && this.registry.citationreg.citationsByItemId[Item.id].length
         && visualForm) {
         if (this.citation.opt["givenname-disambiguation-rule"] === "by-cite") {
             itemSupp['first-reference-note-number'] = this.registry.registry[Item.id]['first-reference-note-number'];
@@ -1258,7 +1252,7 @@ CSL.getCitationCluster = function (inputList, citation) {
             last_locator = !!inputList[pos-1][1].locator;
         }
         params = {};
-        
+
         // Reset shadow_numbers here, suppress reset in getCite()
         this.tmp.shadow_numbers = {};
         if (!this.tmp.just_looking && this.opt.hasPlaceholderTerm) {
@@ -1271,8 +1265,8 @@ CSL.getCitationCluster = function (inputList, citation) {
 
         this.tmp.in_cite_predecessor = false;
         // true is to block reset of shadow numbers
-        
-        
+
+
         if (pos > 0) {
             CSL.getCite.call(this, Item, item, "" + inputList[(pos - 1)][0].id, true);
         } else {
@@ -1359,7 +1353,7 @@ CSL.getCitationCluster = function (inputList, citation) {
         if (!(this.opt.development_extensions.apply_citation_wrapper
               && this.sys.wrapCitationEntry
                && !this.tmp.just_looking
-              && this.tmp.area === "citation")) { 
+              && this.tmp.area === "citation")) {
 
             if (!suppressTrailingPunctuation) {
                 this.output.queue[this.output.queue.length - 1].strings.suffix = suffix;
@@ -1485,7 +1479,7 @@ CSL.getCitationCluster = function (inputList, citation) {
     result += this.output.renderBlobs(objects);
 
     if (result) {
-        //if (CSL.TERMINAL_PUNCTUATION.indexOf(this.tmp.last_chr) > -1 
+        //if (CSL.TERMINAL_PUNCTUATION.indexOf(this.tmp.last_chr) > -1
         //    && this.tmp.last_chr === use_layout_suffix.slice(0, 1)) {
         //    use_layout_suffix = use_layout_suffix.slice(1);
         //}
@@ -1578,7 +1572,7 @@ CSL.citeStart = function (Item, item, blockShadowNumberReset) {
     if (!blockShadowNumberReset) {
         this.tmp.shadow_numbers = {};
     }
-    
+
     this.tmp.disambiguate_count = 0;
     this.tmp.disambiguate_maxMax = 0;
     this.tmp.same_author_as_previous_cite = false;

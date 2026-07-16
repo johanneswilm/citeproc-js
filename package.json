@@ -11,7 +11,9 @@
         "url": "https://github.com/juris-m/citeproc-js.git"
     },
     "files": [
-        "citeproc_commonjs.js"
+        "citeproc_commonjs.js",
+        "test-runner/dist/",
+        "tools/rnc-validator.js"
     ],
     "author": "Michael McMillan <email@michaelmcmillan.net> (http://michaelmcmillan.net/)",
     "contributors": [

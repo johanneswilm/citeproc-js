@@ -65,18 +65,12 @@ function getConfig(dirName, hiddenFile?) {
 }
 let config: any;
 try {
-    if (process.env.TRAVIS) {
-        config = {
-            path: {}
-        };
-    } else {
-        if (!fs.existsSync(path.join(homeDir, ".cslrun.yaml"))) {
-            fs.writeFileSync(path.join(homeDir, ".cslrun.yaml"), defaultConfig);
-        }
-        // Flag looks for a hidden file, .cslrun.yaml
-        config = getConfig(homeDir, true);
-        config.path.configdir = homeDir;
+    if (!fs.existsSync(path.join(homeDir, ".cslrun.yaml"))) {
+        fs.writeFileSync(path.join(homeDir, ".cslrun.yaml"), defaultConfig);
     }
+    // Flag looks for a hidden file, .cslrun.yaml
+    config = getConfig(homeDir, true);
+    config.path.configdir = homeDir;
     var pth = cwd;
     while (path.basename(pth)) {
         if (fs.existsSync(path.join(pth, "cslrun.yaml"))) {
@@ -141,11 +135,7 @@ if (sourceRepoPaths.filter(k => config.path[k]).length < sourceRepoPaths.length)
 }
 config.path.cwd = cwd;
 config.path.scriptdir = scriptDir;
-if (process.env.TRAVIS) {
-    config.path.fixturedir = path.join(homeDir, ".cslTestFixtures");
-} else {
-    config.path.fixturedir = path.join(config.path.configdir, ".cslTestFixtures");
-}
+config.path.fixturedir = path.join(config.path.configdir, ".cslTestFixtures");
 try {
     config.path.chai = require.resolve("chai");
 } catch (e) {

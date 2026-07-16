@@ -35,7 +35,6 @@ const {version} = require("./package.json");
 var ksTimeout;
 var cdTimeout;
 var skipNames = {};
-var TRAVIS = process.env.TRAVIS;
 
 const groupIdMap = {
     final: 2319948,
@@ -122,9 +121,7 @@ function checkSanity() {
         console.log(`cslrun version: ${version}`);
         process.exit();
     }
-    if (TRAVIS) {
-        options.r = "spec";
-    } else if (!options.r) {
+    if (!options.r) {
         options.r = "landing";
     }
     if (config.mode === "styleMode") {
@@ -475,11 +472,6 @@ async function runValidationsAsync() {
 function runFixturesAsync() {
     var fixturesPromise = new Promise<void>((resolve, reject) => {
         console.log("Testing CSL.");
-        if (TRAVIS) {
-            if (!fs.existsSync(config.path.fixturedir)) {
-                fs.mkdirSync(config.path.fixturedir);
-            }
-        }
         if (options.r) {
             if (reporters[options.r]) {
                 if (reporters[options.r].path) {
