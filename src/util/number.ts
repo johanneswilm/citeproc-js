@@ -162,7 +162,6 @@ export class Suffixator {
 }
 
 export function processNumber(node, ItemObject, variable) {
-    //print("** processNumber() ItemObject[variable]="+ItemObject[variable]);
     let val;
 
     const me = this;
@@ -350,7 +349,7 @@ export function processNumber(node, ItemObject, variable) {
                 //print("  fixup: "+elems);
             }
         } else {
-            let elems = [mystr];
+            elems = [mystr];
         }
         // Split elements within each chunk build list of value objects.
         let values = [];
@@ -844,7 +843,9 @@ export function processNumber(node, ItemObject, variable) {
             //print("setPluralsAndNumerics(): "+JSON.stringify(values, null, 2));
 
             for (let obj of values) {
-                if (!obj.numeric) obj.plural = 0;
+                if (!obj.numeric && obj.label) {
+                    this.tmp.shadow_numbers[realVariable].labelForm = obj.labelForm;
+                }
             }
             this.tmp.shadow_numbers[realVariable].values = values;
             // me.sys.print(JSON.stringify(values))

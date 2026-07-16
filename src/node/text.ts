@@ -285,6 +285,7 @@ export const Node_text = {
                             // per-cite fields are read from item, rather than Item
                             func = function (state, Item, item) {
                                 if (item && item[this.variables[0]]) {
+
                                     // Code copied to page variable as well; both
                                     // become cs:number in MLZ extended schema
                                     
