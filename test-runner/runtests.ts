@@ -14,6 +14,14 @@ const zoteroToCSL = require('zotero-to-csl');
 var getAbbrevPath = require("citeproc-abbrevs").getAbbrevPath;
 
 const config = require("./lib/configs");
+var rncValidator = null;
+function getRNCValidator() {
+    if (!rncValidator) {
+        var projectRoot = config.path.src ? path.join(config.path.src, "..") : config.path.cwd;
+        rncValidator = require(path.join(projectRoot, "tools", "rnc-validator.js")).validateCSL;
+    }
+    return rncValidator;
+}
 const reporters = require("./lib/reporters").get(config);
 const parseFixture = require("./lib/fixture-parser").parseFixture;
 const sources = require("./lib/sources");
@@ -324,9 +332,13 @@ function Bundle(noStrip?) {
     if (!config.path.src) {
         console.log("Using processor from package");
         return;
-    } else {
-        console.log("Rebundling processor");
     }
+    var bundlePath = path.join(config.path.src, "..", "citeproc_commonjs.js");
+    // If the prebuilt bundle already exists (built by esbuild), skip the old-style concatenation
+    if (fs.existsSync(bundlePath)) {
+        return;
+    }
+    console.log("Rebundling processor");
     // The markup of the code is weird, so we do weird things to strip
     // comments.
     // The noStrip option is not yet used, but will dump the processor
@@ -350,69 +362,51 @@ function Bundle(noStrip?) {
     fs.writeFileSync(path.join(config.path.src, "..", "citeproc_commonjs.js"), license + ret + "\nmodule.exports = CSL");
 }
 
+function validateCSLWithSchema(schema, test) {
+    var validator = getRNCValidator();
+    return validator(test.CSL, schema);
+}
+
 function runJingAsync(validationCount, validationGoal, schema, test) {
     var jingPromise = new Promise<void>((resolve, reject) => {
-        var tmpobj = tmp.fileSync();
-        fs.writeFileSync(tmpobj.name, test.CSL);
-        var buf = [];
-        //console.log("java -client -jar " + config.path.jing + " -c " + schema + " " + tmpobj.name);
-        var jing = spawn(
-            "java",
-            [
-                "-client",
-                "-jar",
-                config.path.jing,
-                "-c",
-                schema,
-                tmpobj.name
-            ],
-            {});
-        jing.stderr.on('data', (data) => {
-            reject(data.toString());
-        });
-        jing.stdout.on('data', (data) => {
-            process.stdout.write("\n");
-            buf.push(data);
-        });
-        jing.on('close', async function(code) {
-            validationCount++;
-            // If we are watching and code is 0, chain to integration tests.
-            // Otherwise stop here.
-            if (code == 0 && options.watch) {
-
-                // XXX Control this with the -c option?
-                if (options.c) {
-                    process.exit();
-                } else {
-                    await runFixturesAsync();
-                }
-                resolve();
-            } else if (code == 0) {
-                if (!options.validate || options.validate === "all") {
-                    process.stdout.write("+");
-                }
-                if (validationCount === validationGoal) {
-                    console.log("\nDone.");
-                    process.exit(0);
-                }
-                resolve();
-            } else {
-                var txt = Buffer.concat(buf).toString();
-                var lines = txt.split(/(?:\r\n|\n)/);
-                for (let line of lines) {
-                    console.log(line.toString().replace(/^.*?:([0-9]+):([0-9]+):\s*(.*)$/m, "[$1] : $3"));
-                }
-                console.log("\nValidation failure for " + test.NAME);
-                if (options.watch && options.c) {
-                    process.exit();
-                } else if (!options.watch) {
-                    validationCount--;
-                    fs.writeFileSync(path.join(config.path.configdir, ".cslValidationPos"), "" + validationCount);
-                    process.exit(0);
-                }
-                resolve();
+        var result;
+        try {
+            result = validateCSLWithSchema(schema, test);
+        } catch (e) {
+            reject('Validation error: ' + e.message);
+            return;
+        }
+        validationCount++;
+        if (!result.valid) {
+            var txt = result.errors.join('\n');
+            var lines = txt.split(/(?:\r\n|\n)/);
+            for (let line of lines) {
+                console.log(line);
             }
-        });
+            console.log('\nValidation failure for ' + test.NAME);
+            if (options.watch && options.c) {
+                process.exit();
+            } else if (!options.watch) {
+                validationCount--;
+                fs.writeFileSync(path.join(config.path.configdir, '.cslValidationPos'), '' + validationCount);
+                process.exit(0);
+            }
+        } else if (options.watch) {
+            if (options.c) {
+                process.exit();
+            } else {
+                runFixturesAsync();
+            }
+        } else {
+            if (!options.validate || options.validate === 'all') {
+                process.stdout.write('+');
+            }
+            if (validationCount === validationGoal) {
+                console.log('\nDone.');
+                process.exit(0);
+            }
+        }
+        resolve();
     });
     return jingPromise;
 }
@@ -514,7 +508,8 @@ function runFixturesAsync() {
             args.push("--bail");
         }
         args.push(path.join(config.path.fixturedir, "fixtures.js"));
-        var mocha = spawn("mocha", args, {
+        var mochaPath = config.path.mocha || "mocha";
+        var mocha = spawn(mochaPath, args, {
             shell: process.platform == 'win32'
         });
         mocha.on("error", function(err) {
@@ -584,8 +579,7 @@ function runFixturesAsync() {
             }
         });
         mocha.stderr.on('data', (data) => {
-            console.log(data.toString().replace(/\s+\r?$/, ""));
-            reject();
+            process.stderr.write(data);
         });
         mocha.on('close', (code) => {
             resolve();

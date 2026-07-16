@@ -3,6 +3,9 @@
     "version": "2.4.63",
     "description": "The citeproc-js citation formatting module, in CommonJS format. This version is based on citeproc-js 1.4.63",
     "main": "citeproc_commonjs.js",
+    "bin": {
+        "cslrun": "./test-runner/dist/runtests.js"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/juris-m/citeproc-js.git"
@@ -17,10 +20,29 @@
     "license": "(CPAL-1.0 OR AGPL-3.0-or-later)",
     "scripts": {
         "build": "node tools/build-bundle.js",
+        "build:runner": "tsc -p test-runner/tsconfig.json && cp test-runner/lib/templateJS.js test-runner/lib/templateTXT.txt test-runner/dist/lib/ && cp test-runner/package.json test-runner/dist/package.json",
+        "pretest": "npm run build && npm run build:runner",
+        "test": "node test-runner/dist/runtests.js -a -N",
+        "test:all": "node test-runner/dist/runtests.js -a",
         "typecheck": "tsc --noEmit -p tsconfig.json"
     },
     "devDependencies": {
         "esbuild": "^0.28.1",
-        "typescript": "^5.9.3"
+        "typescript": "^5.9.3",
+        "chai": "^4.5.0",
+        "chokidar": "^2.1.8",
+        "citeproc-abbrevs": "^1.1.62",
+        "citeproc-csl-schemata": "^1.0.30",
+        "citeproc-juris-modules": "^1.0.44",
+        "citeproc-locales": ">=1.0.2",
+        "cross-clear": "^1.0.0",
+        "fetch-promise": "^1.0.2",
+        "getopts": "^2.3.0",
+        "mocha": "^10.8.0",
+        "normalize-newline": "^3.0.0",
+        "tmp": "^0.0.33",
+        "yaml": "^1.10.3",
+        "zotero-to-csl": ">=1.2.0",
+        "zotero2jurismcsl": "^0.0.12"
     }
 }

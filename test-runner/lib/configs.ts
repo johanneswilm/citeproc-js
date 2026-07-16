@@ -148,7 +148,17 @@ if (process.env.TRAVIS) {
 } else {
     config.path.fixturedir = path.join(config.path.configdir, ".cslTestFixtures");
 }
-config.path.chai = path.join(scriptDir, "node_modules", "chai", "index.js");
+try {
+    config.path.chai = require.resolve("chai");
+} catch (e) {
+    config.path.chai = path.join(scriptDir, "node_modules", "chai", "index.js");
+}
+try {
+    config.path.mocha = require.resolve("mocha/bin/mocha");
+} catch (e) {
+    config.path.mocha = "mocha";
+}
+config.path.projectRoot = cwd;
 module.exports = config;
 
 export {};

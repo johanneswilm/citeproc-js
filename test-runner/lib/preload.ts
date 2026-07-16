@@ -3,7 +3,7 @@ var path = require("path");
 var config = require("./configs");
 
 var CSL: any = true;
-if (fs.existsSync(config.path.src && path.join(config.path.src, "..", "citeproc_commonjs.js"))) {
+if (config.path.src && fs.existsSync(path.join(config.path.src, "..", "citeproc_commonjs.js"))) {
     try {
         var CSL = require(path.join(config.path.src, "..", "citeproc_commonjs.js"));
     } catch (err) {

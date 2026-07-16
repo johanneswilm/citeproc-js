@@ -7,7 +7,7 @@ var normalizeNewline = require("normalize-newline");
 var config = require("./configs");
 var preloadAbbreviations = require("./preload").preloadAbbreviations;
 var cwd = process.cwd();
-if (fs.existsSync(config.path.src && path.join(config.path.src, "..", "citeproc_commonjs.js"))) {
+if (config.path.src && fs.existsSync(path.join(config.path.src, "..", "citeproc_commonjs.js"))) {
     try {
         var CSL = require(path.join(config.path.src, "..", "citeproc_commonjs.js"));
     }
