@@ -97,6 +97,11 @@ function runFixture(name) {
                 return null;
             }
         } else {
+            if (test.CITATIONS) {
+                for (const c of test.CITATIONS) {
+                    engine.processCitationCluster(c[0], c[1], c[2]);
+                }
+            }
             const res = test.BIBSECTION ? engine.makeBibliography(test.BIBSECTION) : engine.makeBibliography();
             actual = res[0].bibstart + res[1].join('') + res[0].bibend;
         }
