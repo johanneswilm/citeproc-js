@@ -1366,9 +1366,10 @@ Attributes["@entry-spacing"] = function (state, arg) {
 };
 
 Attributes["@display"] = function (state, arg) {
-    if (["block", "left-margin", "right-inline", "indent"].indexOf(arg) > -1) {
-        this.strings["display"] = arg;
+    if (state.bibliography.tokens.length === 2) {
+        state.opt.using_display = true;
     }
+    this.strings.cls = arg;
 };
 
 Attributes["@reverse-order"] = function (state, arg) {
